@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel, EmailStr, Field
 
 from app.models.user import UserRole
@@ -86,8 +86,16 @@ class SendOtpRequest(BaseModel):
 # Schema for Verifying OTP
 class VerifyOtpRequest(BaseModel):
     email: EmailStr
-    otp: str = Field(..., min_length=4, max_length=10)
+    otp: Optional[Union[str, int]] = None
+    oneTimeCode: Optional[Union[str, int]] = None
     purpose: Optional[str] = "VERIFICATION"
+
+    def get_code(self) -> str:
+        if self.otp is not None and str(self.otp).strip():
+            return str(self.otp).strip()
+        if self.oneTimeCode is not None and str(self.oneTimeCode).strip():
+            return str(self.oneTimeCode).strip()
+        return ""
 
 
 # Schema for Forgot Password
@@ -98,6 +106,14 @@ class ForgotPasswordRequest(BaseModel):
 # Schema for Resetting Password with OTP
 class ResetPasswordWithOtpRequest(BaseModel):
     email: EmailStr
-    otp: str = Field(..., min_length=4, max_length=10)
+    otp: Optional[Union[str, int]] = None
+    oneTimeCode: Optional[Union[str, int]] = None
     new_password: str = Field(..., min_length=6, max_length=128)
+
+    def get_code(self) -> str:
+        if self.otp is not None and str(self.otp).strip():
+            return str(self.otp).strip()
+        if self.oneTimeCode is not None and str(self.oneTimeCode).strip():
+            return str(self.oneTimeCode).strip()
+        return ""
 

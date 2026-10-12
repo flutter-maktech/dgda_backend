@@ -12,6 +12,7 @@ from app.core.database import AsyncSessionLocal, init_db
 from app.core.limiter import limiter
 from app.core.security import get_password_hash
 from app.models.user import User, UserRole
+from app.models.otp import OtpVerification
 
 
 async def seed_initial_admin() -> None:

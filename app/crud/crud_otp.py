@@ -14,21 +14,11 @@ async def create_otp(
     purpose: str = "VERIFICATION"
 ) -> str:
     """
-    Generate a new 6-digit numeric OTP, invalidate previous pending codes,
-    and persist in the database with an expiration timestamp.
+    Generate a new 6-digit numeric OTP and persist immediately in the database
+    with an expiration timestamp.
     """
     clean_email = email.lower().strip()
-
-    # Invalidate older pending OTPs for this email and purpose
-    await db.execute(
-        update(OtpVerification)
-        .where(
-            OtpVerification.email == clean_email,
-            OtpVerification.purpose == purpose,
-            OtpVerification.is_used == False
-        )
-        .values(is_used=True)
-    )
+    clean_purpose = purpose.strip().upper()
 
     # Generate a cryptographically clean 6-digit code
     code = f"{random.randint(100000, 999999)}"
@@ -37,12 +27,13 @@ async def create_otp(
     otp_record = OtpVerification(
         email=clean_email,
         code=code,
-        purpose=purpose,
+        purpose=clean_purpose,
         is_used=False,
         expires_at=expires_at,
     )
     db.add(otp_record)
-    await db.flush()
+    await db.commit()
+    await db.refresh(otp_record)
     return code
 
 
@@ -54,17 +45,18 @@ async def verify_otp(
 ) -> bool:
     """
     Verify if the supplied code is valid, unused, and not expired.
-    Marks the code as used upon successful verification.
+    Marks all pending codes for this email and purpose as used upon successful verification.
     """
     clean_email = email.lower().strip()
     clean_code = code.strip()
+    clean_purpose = purpose.strip().upper()
 
     result = await db.execute(
         select(OtpVerification)
         .where(
             OtpVerification.email == clean_email,
             OtpVerification.code == clean_code,
-            OtpVerification.purpose == purpose,
+            OtpVerification.purpose == clean_purpose,
             OtpVerification.is_used == False,
         )
         .order_by(OtpVerification.created_at.desc())
@@ -77,8 +69,15 @@ async def verify_otp(
     if otp_record.is_expired():
         return False
 
-    # Mark as used so it cannot be replayed
-    otp_record.is_used = True
-    db.add(otp_record)
-    await db.flush()
+    # Mark all pending codes for this email and purpose as used so none can be replayed
+    await db.execute(
+        update(OtpVerification)
+        .where(
+            OtpVerification.email == clean_email,
+            OtpVerification.purpose == clean_purpose,
+        )
+        .values(is_used=True)
+    )
+    await db.commit()
     return True
+

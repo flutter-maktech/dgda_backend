@@ -57,29 +57,41 @@ async def register(
     # Check if email is already registered
     existing_user = await get_user_by_email(db, email=user_in.email)
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="A user with this email already exists."
-        )
-
-    # Check if username is already taken
-    if user_in.username:
-        existing_username = await get_user_by_username(db, username=user_in.username)
-        if existing_username:
+        if not existing_user.is_verified:
+            # User previously registered but never finished OTP verification.
+            # Allow them to refresh their credentials and proceed with verification.
+            existing_user.full_name = user_in.full_name
+            if user_in.phone_number:
+                existing_user.phone_number = user_in.phone_number
+            existing_user.hashed_password = get_password_hash(user_in.password)
+            db.add(existing_user)
+            await db.commit()
+            await db.refresh(existing_user)
+            user = existing_user
+        else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="A user with this username already exists."
+                detail="Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter."
             )
+    else:
+        # Check if username is already taken
+        if user_in.username:
+            existing_username = await get_user_by_username(db, username=user_in.username)
+            if existing_username:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="A user with this username already exists."
+                )
 
-    # By default, public registration creates regular USER role
-    user_data = user_in.model_copy()
-    user_data.role = UserRole.USER
-
-    user = await create_user(db, user_in=user_data)
+        # By default, public registration creates regular USER role
+        user_data = user_in.model_copy()
+        user_data.role = UserRole.USER
+        user = await create_user(db, user_in=user_data)
 
     # Automatically generate and dispatch verification OTP email via Resend
     try:
         otp_code = await create_otp(db, email=user.email, purpose="VERIFICATION")
+        print(f"Generated OTP for {user.email}: {otp_code}")
         send_otp_email(to_email=user.email, otp_code=otp_code, purpose="VERIFICATION")
     except Exception as e:
         print(f"Notice: Failed to dispatch initial OTP via Resend: {e}")
@@ -302,11 +314,21 @@ async def verify_user_otp(
     """
     Validate user OTP. If purpose is VERIFICATION, mark the user account as verified.
     """
+    code = verify_req.get_code()
+    if not code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le code de vérification est requis."
+        )
+
+    clean_email = str(verify_req.email).lower().strip()
+    purpose = (verify_req.purpose or "VERIFICATION").strip().upper()
+
     is_valid = await verify_otp(
         db,
-        email=verify_req.email,
-        code=verify_req.otp,
-        purpose=verify_req.purpose or "VERIFICATION"
+        email=clean_email,
+        code=code,
+        purpose=purpose
     )
 
     if not is_valid:
@@ -316,8 +338,8 @@ async def verify_user_otp(
         )
 
     # If verification is for account activation, update user is_verified status
-    user = await get_user_by_email(db, email=verify_req.email)
-    if user and (verify_req.purpose == "VERIFICATION" or verify_req.purpose is None):
+    user = await get_user_by_email(db, email=clean_email)
+    if user and purpose == "VERIFICATION":
         user.is_verified = True
         db.add(user)
         await db.commit()
@@ -325,7 +347,7 @@ async def verify_user_otp(
     return {
         "message": "Vérification réussie avec succès.",
         "verified": True,
-        "email": verify_req.email
+        "email": clean_email
     }
 
 
@@ -343,16 +365,18 @@ async def forgot_password(
     """
     Generate password reset OTP and dispatch via Resend.
     """
-    user = await get_user_by_email(db, email=forgot_req.email)
+    clean_email = str(forgot_req.email).lower().strip()
+    user = await get_user_by_email(db, email=clean_email)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Aucun compte associé à cette adresse e-mail n'a été trouvé."
         )
 
-    otp_code = await create_otp(db, email=forgot_req.email, purpose="PASSWORD_RESET")
+    otp_code = await create_otp(db, email=clean_email, purpose="PASSWORD_RESET")
+    print(f"Generated password reset OTP for {clean_email}: {otp_code}")
     email_sent = send_otp_email(
-        to_email=forgot_req.email,
+        to_email=clean_email,
         otp_code=otp_code,
         purpose="PASSWORD_RESET"
     )
@@ -365,7 +389,7 @@ async def forgot_password(
 
     return {
         "message": "Un code de réinitialisation a été envoyé à votre adresse e-mail.",
-        "email": forgot_req.email
+        "email": clean_email
     }
 
 
@@ -381,10 +405,18 @@ async def reset_password(
     """
     Verify OTP for PASSWORD_RESET purpose and update to new password.
     """
+    code = reset_req.get_code()
+    if not code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le code de réinitialisation est requis."
+        )
+
+    clean_email = str(reset_req.email).lower().strip()
     is_valid = await verify_otp(
         db,
-        email=reset_req.email,
-        code=reset_req.otp,
+        email=clean_email,
+        code=code,
         purpose="PASSWORD_RESET"
     )
 
@@ -393,6 +425,7 @@ async def reset_password(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Code de réinitialisation incorrect ou expiré."
         )
+
 
     user = await get_user_by_email(db, email=reset_req.email)
     if not user:

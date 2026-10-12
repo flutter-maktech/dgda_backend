@@ -11,15 +11,19 @@ class OtpVerification(Base):
     code = Column(String(10), nullable=False)
     purpose = Column(String(50), default="VERIFICATION", nullable=False)
     is_used = Column(Boolean, default=False, nullable=False)
-    expires_at = Column(DateTime(timezone=True), nullable=False)
+    expires_at = Column(DateTime, nullable=False)
     created_at = Column(
-        DateTime(timezone=True),
+        DateTime,
         default=lambda: datetime.now(timezone.utc),
         nullable=False
     )
 
     def is_expired(self) -> bool:
         now = datetime.now(timezone.utc)
-        if self.expires_at.tzinfo is None:
-            return datetime.utcnow() > self.expires_at
-        return now > self.expires_at
+        exp = self.expires_at
+        if exp is None:
+            return True
+        if exp.tzinfo is None:
+            # If SQLite or database returns naive datetime, attach UTC
+            exp = exp.replace(tzinfo=timezone.utc)
+        return now > exp
