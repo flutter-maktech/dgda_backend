@@ -1,0 +1,41 @@
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Environment secrets
+.env
+.env.local
+
+# Databases (development sqlite)
+*.db
+*.sqlite3
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
