@@ -17,5 +17,8 @@ pyjwt[crypto]>=2.9.0
 bcrypt>=4.2.0
 python-multipart>=0.0.9
 
+# Email Service (Resend)
+resend>=2.6.0
+
 # Rate Limiting & Traffic Protection
 slowapi>=0.1.9

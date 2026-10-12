@@ -75,3 +75,29 @@ class TokenPayload(BaseModel):
     role: Optional[str] = "user"
     type: Optional[str] = "access"
     exp: Optional[int] = None
+
+
+# Schema for Sending / Resending OTP
+class SendOtpRequest(BaseModel):
+    email: EmailStr
+    purpose: Optional[str] = "VERIFICATION"
+
+
+# Schema for Verifying OTP
+class VerifyOtpRequest(BaseModel):
+    email: EmailStr
+    otp: str = Field(..., min_length=4, max_length=10)
+    purpose: Optional[str] = "VERIFICATION"
+
+
+# Schema for Forgot Password
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+# Schema for Resetting Password with OTP
+class ResetPasswordWithOtpRequest(BaseModel):
+    email: EmailStr
+    otp: str = Field(..., min_length=4, max_length=10)
+    new_password: str = Field(..., min_length=6, max_length=128)
+

@@ -46,5 +46,10 @@ class Settings(BaseSettings):
     RATE_LIMIT_LOGIN: str = "10/minute"
     RATE_LIMIT_REGISTER: str = "5/minute"
 
+    # Email Service (Resend)
+    RESEND_API_KEY: str = ""
+    EMAILS_FROM: str = "DGDA Douane <onboarding@resend.dev>"
+    OTP_EXPIRE_MINUTES: int = 10
+
 
 settings = Settings()

@@ -10,6 +10,7 @@ from app.core.security import (
     decode_token,
     verify_password,
 )
+from app.crud.crud_otp import create_otp, verify_otp
 from app.crud.crud_user import (
     authenticate,
     create_user,
@@ -20,14 +21,19 @@ from app.crud.crud_user import (
 )
 from app.models.user import User, UserRole
 from app.schemas.user import (
+    ForgotPasswordRequest,
     PasswordChangeRequest,
     RefreshTokenRequest,
+    ResetPasswordWithOtpRequest,
+    SendOtpRequest,
     TokenResponse,
     UserCreate,
     UserLogin,
     UserResponse,
     UserUpdate,
+    VerifyOtpRequest,
 )
+from app.services.email_service import send_otp_email
 
 router = APIRouter()
 
@@ -234,3 +240,160 @@ async def change_password(
 
     await update_user(db, db_user=current_user, user_in={"password": pwd_in.new_password})
     return {"message": "Password changed successfully."}
+
+
+@router.post(
+    "/send-otp",
+    status_code=status.HTTP_200_OK,
+    summary="Generate and send OTP code to email via Resend"
+)
+@router.post(
+    "/resend-otp",
+    status_code=status.HTTP_200_OK,
+    summary="Resend OTP code to email via Resend"
+)
+@limiter.limit("5/minute")
+async def send_otp(
+    request: Request,
+    otp_req: SendOtpRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Generate a 6-digit OTP code, save in database, and dispatch an email via Resend.
+    """
+    otp_code = await create_otp(db, email=otp_req.email, purpose=otp_req.purpose or "VERIFICATION")
+    
+    # Send email through Resend API
+    email_sent = send_otp_email(
+        to_email=otp_req.email,
+        otp_code=otp_code,
+        purpose=otp_req.purpose or "VERIFICATION"
+    )
+
+    if not email_sent:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Échec de l'envoi de l'e-mail via Resend. Veuillez vérifier votre adresse e-mail."
+        )
+
+    return {
+        "message": "Code de vérification envoyé avec succès.",
+        "email": otp_req.email,
+        "expires_in_minutes": settings.OTP_EXPIRE_MINUTES
+    }
+
+
+@router.post(
+    "/verify-otp",
+    status_code=status.HTTP_200_OK,
+    summary="Verify submitted OTP code"
+)
+async def verify_user_otp(
+    verify_req: VerifyOtpRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Validate user OTP. If purpose is VERIFICATION, mark the user account as verified.
+    """
+    is_valid = await verify_otp(
+        db,
+        email=verify_req.email,
+        code=verify_req.otp,
+        purpose=verify_req.purpose or "VERIFICATION"
+    )
+
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Code de vérification incorrect ou expiré."
+        )
+
+    # If verification is for account activation, update user is_verified status
+    user = await get_user_by_email(db, email=verify_req.email)
+    if user and (verify_req.purpose == "VERIFICATION" or verify_req.purpose is None):
+        user.is_verified = True
+        db.add(user)
+        await db.commit()
+
+    return {
+        "message": "Vérification réussie avec succès.",
+        "verified": True,
+        "email": verify_req.email
+    }
+
+
+@router.post(
+    "/forgot-password",
+    status_code=status.HTTP_200_OK,
+    summary="Send password reset OTP via Resend"
+)
+@limiter.limit("5/minute")
+async def forgot_password(
+    request: Request,
+    forgot_req: ForgotPasswordRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Generate password reset OTP and dispatch via Resend.
+    """
+    user = await get_user_by_email(db, email=forgot_req.email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Aucun compte associé à cette adresse e-mail n'a été trouvé."
+        )
+
+    otp_code = await create_otp(db, email=forgot_req.email, purpose="PASSWORD_RESET")
+    email_sent = send_otp_email(
+        to_email=forgot_req.email,
+        otp_code=otp_code,
+        purpose="PASSWORD_RESET"
+    )
+
+    if not email_sent:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Échec de l'envoi de l'e-mail de réinitialisation."
+        )
+
+    return {
+        "message": "Un code de réinitialisation a été envoyé à votre adresse e-mail.",
+        "email": forgot_req.email
+    }
+
+
+@router.post(
+    "/reset-password",
+    status_code=status.HTTP_200_OK,
+    summary="Reset password using verified OTP"
+)
+async def reset_password(
+    reset_req: ResetPasswordWithOtpRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Verify OTP for PASSWORD_RESET purpose and update to new password.
+    """
+    is_valid = await verify_otp(
+        db,
+        email=reset_req.email,
+        code=reset_req.otp,
+        purpose="PASSWORD_RESET"
+    )
+
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Code de réinitialisation incorrect ou expiré."
+        )
+
+    user = await get_user_by_email(db, email=reset_req.email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Utilisateur non trouvé."
+        )
+
+    await update_user(db, db_user=user, user_in={"password": reset_req.new_password})
+    return {"message": "Votre mot de passe a été réinitialisé avec succès."}
+

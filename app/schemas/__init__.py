@@ -1,6 +1,9 @@
 from app.schemas.user import (
+    ForgotPasswordRequest,
     PasswordChangeRequest,
     RefreshTokenRequest,
+    ResetPasswordWithOtpRequest,
+    SendOtpRequest,
     TokenPayload,
     TokenResponse,
     UserBase,
@@ -8,6 +11,7 @@ from app.schemas.user import (
     UserLogin,
     UserResponse,
     UserUpdate,
+    VerifyOtpRequest,
 )
 
 __all__ = [
@@ -20,4 +24,8 @@ __all__ = [
     "RefreshTokenRequest",
     "TokenPayload",
     "PasswordChangeRequest",
+    "SendOtpRequest",
+    "VerifyOtpRequest",
+    "ForgotPasswordRequest",
+    "ResetPasswordWithOtpRequest",
 ]
