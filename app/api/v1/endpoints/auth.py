@@ -77,6 +77,13 @@ async def register(
 
     user = await create_user(db, user_in=user_data)
 
+    # Automatically generate and dispatch verification OTP email via Resend
+    try:
+        otp_code = await create_otp(db, email=user.email, purpose="VERIFICATION")
+        send_otp_email(to_email=user.email, otp_code=otp_code, purpose="VERIFICATION")
+    except Exception as e:
+        print(f"Notice: Failed to dispatch initial OTP via Resend: {e}")
+
     # Generate JWT tokens
     access_token = create_access_token(subject=user.id, role=user.role.value)
     refresh_token = create_refresh_token(subject=user.id)
