@@ -1,3 +1,4 @@
+import random
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -54,6 +55,17 @@ async def register(
     Register a new user, automatically hash the password,
     and return an access + refresh token.
     """
+    # Ensure username uniqueness automatically without blocking registration
+    clean_username = user_in.username.lower().strip() if user_in.username else None
+    if clean_username:
+        base_name = clean_username
+        while True:
+            existing_username = await get_user_by_username(db, username=clean_username)
+            if existing_username and existing_username.email != user_in.email.lower():
+                clean_username = f"{base_name}_{random.randint(100, 9999)}"
+            else:
+                break
+
     # Check if email is already registered
     existing_user = await get_user_by_email(db, email=user_in.email)
     if existing_user:
@@ -64,6 +76,8 @@ async def register(
             if user_in.phone_number:
                 existing_user.phone_number = user_in.phone_number
             existing_user.hashed_password = get_password_hash(user_in.password)
+            if clean_username:
+                existing_user.username = clean_username
             db.add(existing_user)
             await db.commit()
             await db.refresh(existing_user)
@@ -74,19 +88,13 @@ async def register(
                 detail="Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter."
             )
     else:
-        # Check if username is already taken
-        if user_in.username:
-            existing_username = await get_user_by_username(db, username=user_in.username)
-            if existing_username:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="A user with this username already exists."
-                )
-
         # By default, public registration creates regular USER role
         user_data = user_in.model_copy()
         user_data.role = UserRole.USER
+        if clean_username:
+            user_data.username = clean_username
         user = await create_user(db, user_in=user_data)
+
 
     # Automatically generate and dispatch verification OTP email via Resend
     try:
