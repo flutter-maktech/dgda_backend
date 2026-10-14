@@ -1,8 +1,12 @@
+from datetime import timedelta
 import random
+from typing import Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.security import HTTPAuthorizationCredentials
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db
+from app.api.deps import get_current_user, get_db, security_bearer
 from app.core.config import settings
 from app.core.limiter import limiter
 from app.core.security import (
@@ -12,6 +16,7 @@ from app.core.security import (
     verify_password,
 )
 from app.crud.crud_otp import create_otp, verify_otp
+from app.models.otp import OtpVerification
 from app.crud.crud_user import (
     authenticate,
     create_user,
@@ -315,12 +320,18 @@ async def send_otp(
     status_code=status.HTTP_200_OK,
     summary="Verify submitted OTP code"
 )
+@router.post(
+    "/verify-email",
+    status_code=status.HTTP_200_OK,
+    summary="Verify submitted OTP code (email verification alias)"
+)
 async def verify_user_otp(
     verify_req: VerifyOtpRequest,
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Validate user OTP. If purpose is VERIFICATION, mark the user account as verified.
+    Validate user OTP. If purpose is VERIFICATION, mark user as verified.
+    If purpose is PASSWORD_RESET, generate a temporary reset token and keep OTP valid until password reset.
     """
     code = verify_req.get_code()
     if not code:
@@ -332,11 +343,13 @@ async def verify_user_otp(
     clean_email = str(verify_req.email).lower().strip()
     purpose = (verify_req.purpose or "VERIFICATION").strip().upper()
 
+    # If it's for PASSWORD_RESET, we don't invalidate the OTP code yet, so reset_password can also verify it
     is_valid = await verify_otp(
         db,
         email=clean_email,
         code=code,
-        purpose=purpose
+        purpose=purpose,
+        mark_used=(purpose != "PASSWORD_RESET")
     )
 
     if not is_valid:
@@ -352,17 +365,28 @@ async def verify_user_otp(
         db.add(user)
         await db.commit()
 
+    # Generate a reset token if purpose is PASSWORD_RESET
+    reset_token = ""
+    if purpose == "PASSWORD_RESET":
+        reset_token = create_access_token(
+            subject=user.id if user else clean_email,
+            role=user.role.value if user else "user",
+            expires_delta=timedelta(minutes=15)
+        )
+
     return {
         "message": "Vérification réussie avec succès.",
         "verified": True,
-        "email": clean_email
+        "email": clean_email,
+        "token": reset_token,
+        "data": reset_token if reset_token else True
     }
 
 
 @router.post(
     "/forgot-password",
     status_code=status.HTTP_200_OK,
-    summary="Send password reset OTP via Resend"
+    summary="Send password reset OTP via Brevo"
 )
 @limiter.limit("5/minute")
 async def forgot_password(
@@ -371,7 +395,7 @@ async def forgot_password(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Generate password reset OTP and dispatch via Resend.
+    Generate password reset OTP and dispatch via Brevo/email.
     """
     clean_email = str(forgot_req.email).lower().strip()
     user = await get_user_by_email(db, email=clean_email)
@@ -404,44 +428,87 @@ async def forgot_password(
 @router.post(
     "/reset-password",
     status_code=status.HTTP_200_OK,
-    summary="Reset password using verified OTP"
+    summary="Reset password using verified OTP or reset token"
 )
 async def reset_password(
     reset_req: ResetPasswordWithOtpRequest,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_bearer)
 ):
     """
-    Verify OTP for PASSWORD_RESET purpose and update to new password.
+    Verify OTP or reset token and update user password.
     """
-    code = reset_req.get_code()
-    if not code:
+    new_password = reset_req.get_password()
+    if not new_password or len(new_password) < 6:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Le code de réinitialisation est requis."
+            detail="Le nouveau mot de passe doit contenir au moins 6 caractères."
         )
 
-    clean_email = str(reset_req.email).lower().strip()
-    is_valid = await verify_otp(
-        db,
-        email=clean_email,
-        code=code,
-        purpose="PASSWORD_RESET"
-    )
+    user = None
 
-    if not is_valid:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Code de réinitialisation incorrect ou expiré."
+    # Check 1: Bearer token header or body token
+    token = credentials.credentials if (credentials and credentials.credentials) else reset_req.token
+    if token:
+        payload = decode_token(token)
+        if payload and payload.get("sub"):
+            sub = str(payload["sub"])
+            if sub.isdigit():
+                user = await get_user_by_id(db, user_id=int(sub))
+            else:
+                user = await get_user_by_email(db, email=sub)
+
+    # Check 2: OTP and Email
+    if not user:
+        if not reset_req.email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="L'adresse e-mail est requise pour réinitialiser le mot de passe."
+            )
+        code = reset_req.get_code()
+        if not code:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Le code de réinitialisation est requis."
+            )
+
+        clean_email = str(reset_req.email).lower().strip()
+        is_valid = await verify_otp(
+            db,
+            email=clean_email,
+            code=code,
+            purpose="PASSWORD_RESET",
+            mark_used=True
         )
 
+        if not is_valid:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Code de réinitialisation incorrect ou expiré."
+            )
 
-    user = await get_user_by_email(db, email=reset_req.email)
+        user = await get_user_by_email(db, email=clean_email)
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Utilisateur non trouvé."
         )
 
-    await update_user(db, db_user=user, user_in={"password": reset_req.new_password})
+    # Update password
+    await update_user(db, db_user=user, user_in={"password": new_password})
+
+    # Invalidate any remaining OTPs for PASSWORD_RESET for this user
+    await db.execute(
+        update(OtpVerification)
+        .where(
+            OtpVerification.email == user.email,
+            OtpVerification.purpose == "PASSWORD_RESET",
+        )
+        .values(is_used=True)
+    )
+    await db.commit()
+
     return {"message": "Votre mot de passe a été réinitialisé avec succès."}
+
 

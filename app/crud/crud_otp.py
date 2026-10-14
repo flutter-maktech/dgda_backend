@@ -41,11 +41,12 @@ async def verify_otp(
     db: AsyncSession,
     email: str,
     code: str,
-    purpose: str = "VERIFICATION"
+    purpose: str = "VERIFICATION",
+    mark_used: bool = True,
 ) -> bool:
     """
     Verify if the supplied code is valid, unused, and not expired.
-    Marks all pending codes for this email and purpose as used upon successful verification.
+    If mark_used is True, marks all pending codes for this email and purpose as used.
     """
     clean_email = email.lower().strip()
     clean_code = code.strip()
@@ -69,15 +70,16 @@ async def verify_otp(
     if otp_record.is_expired():
         return False
 
-    # Mark all pending codes for this email and purpose as used so none can be replayed
-    await db.execute(
-        update(OtpVerification)
-        .where(
-            OtpVerification.email == clean_email,
-            OtpVerification.purpose == clean_purpose,
+    if mark_used:
+        # Mark all pending codes for this email and purpose as used so none can be replayed
+        await db.execute(
+            update(OtpVerification)
+            .where(
+                OtpVerification.email == clean_email,
+                OtpVerification.purpose == clean_purpose,
+            )
+            .values(is_used=True)
         )
-        .values(is_used=True)
-    )
-    await db.commit()
+        await db.commit()
     return True
 

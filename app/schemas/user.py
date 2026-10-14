@@ -105,10 +105,14 @@ class ForgotPasswordRequest(BaseModel):
 
 # Schema for Resetting Password with OTP
 class ResetPasswordWithOtpRequest(BaseModel):
-    email: EmailStr
+    email: Optional[EmailStr] = None
     otp: Optional[Union[str, int]] = None
     oneTimeCode: Optional[Union[str, int]] = None
-    new_password: str = Field(..., min_length=6, max_length=128)
+    new_password: Optional[str] = None
+    newPassword: Optional[str] = None
+    confirm_password: Optional[str] = None
+    confirmPassword: Optional[str] = None
+    token: Optional[str] = None
 
     def get_code(self) -> str:
         if self.otp is not None and str(self.otp).strip():
@@ -116,4 +120,7 @@ class ResetPasswordWithOtpRequest(BaseModel):
         if self.oneTimeCode is not None and str(self.oneTimeCode).strip():
             return str(self.oneTimeCode).strip()
         return ""
+
+    def get_password(self) -> str:
+        return (self.new_password or self.newPassword or "").strip()
 
