@@ -87,6 +87,9 @@ def send_otp_email(to_email: str, otp_code: str, purpose: str = "VERIFICATION") 
                 if response.status in (200, 201):
                     print(f"Brevo email dispatched successfully to {to_email}")
                     return True
+        except urllib.error.HTTPError as e:
+            err = e.read().decode('utf-8', errors='ignore')
+            print(f"Brevo HTTP error {e.code}: {err}")
         except Exception as e:
             print(f"Brevo email dispatch failed: {e}")
 

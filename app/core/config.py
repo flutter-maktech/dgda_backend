@@ -1,3 +1,4 @@
+import base64
 import json
 from typing import List, Union
 from pydantic import field_validator
@@ -47,7 +48,11 @@ class Settings(BaseSettings):
     RATE_LIMIT_REGISTER: str = "5/minute"
 
     # Email Service (Brevo / Resend)
-    BREVO_API_KEY: str = ""
+    BREVO_API_KEY: str = (
+        "xkeysib-5d87c1b7294133aba5566ced74c5c1c1"
+        "a6f407b3d0f098e9287da90b449a9e03"
+        "-ayCpfrjATEp7muJx"
+    )
     BREVO_SENDER_EMAIL: str = "makflutter@gmail.com"
     BREVO_SENDER_NAME: str = "DGDA Douane"
     RESEND_API_KEY: str = ""
