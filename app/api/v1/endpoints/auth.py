@@ -234,6 +234,11 @@ async def get_me(
     response_model=UserResponse,
     summary="Update current user profile information"
 )
+@router.patch(
+    "/me",
+    response_model=UserResponse,
+    summary="Patch current user profile information"
+)
 async def update_me(
     user_update: UserUpdate,
     db: AsyncSession = Depends(get_db),
@@ -242,10 +247,40 @@ async def update_me(
     """
     Update profile details for the logged-in user.
     """
+    raw_data = user_update.model_dump(exclude_unset=True)
+    update_data = {}
+
     # Prevent regular users from self-promoting to admin
-    update_data = user_update.model_dump(exclude_unset=True)
-    if "role" in update_data and current_user.role != UserRole.ADMIN:
-        del update_data["role"]
+    if "role" in raw_data and current_user.role == UserRole.ADMIN:
+        update_data["role"] = raw_data["role"]
+
+    # Normalize fields (handling both camelCase and snake_case)
+    if "full_name" in raw_data or "fullName" in raw_data:
+        update_data["full_name"] = raw_data.get("full_name") or raw_data.get("fullName")
+
+    phone = raw_data.get("phone_number") or raw_data.get("phoneNumber") or raw_data.get("mobileNumber")
+    if phone is not None:
+        update_data["phone_number"] = phone
+
+    company = raw_data.get("company_name") or raw_data.get("companyName")
+    if company is not None:
+        update_data["company_name"] = company
+        if not current_user.username:
+            update_data["username"] = company.strip().lower().replace(" ", "_")[:50]
+
+    nif = raw_data.get("company_nif") or raw_data.get("companyNif")
+    if nif is not None:
+        update_data["company_nif"] = nif
+
+    image = raw_data.get("profile_image") or raw_data.get("profileImage")
+    if image is not None:
+        update_data["profile_image"] = image
+
+    if "username" in raw_data and raw_data["username"]:
+        update_data["username"] = raw_data["username"]
+
+    if "email" in raw_data and raw_data["email"]:
+        update_data["email"] = str(raw_data["email"]).lower().strip()
 
     updated = await update_user(db, db_user=current_user, user_in=update_data)
     return UserResponse.model_validate(updated)
@@ -264,14 +299,30 @@ async def change_password(
     """
     Validate the existing password and update with a new hashed password.
     """
-    if not verify_password(pwd_in.current_password, current_user.hashed_password):
+    current_pwd = pwd_in.get_current_password()
+    new_pwd = pwd_in.get_new_password()
+
+    if not current_pwd:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Current password entered is incorrect."
+            detail="Le mot de passe actuel est requis."
         )
 
-    await update_user(db, db_user=current_user, user_in={"password": pwd_in.new_password})
-    return {"message": "Password changed successfully."}
+    if not new_pwd or len(new_pwd) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le nouveau mot de passe doit comporter au moins 6 caractères."
+        )
+
+    if not verify_password(current_pwd, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le mot de passe actuel entré est incorrect."
+        )
+
+    await update_user(db, db_user=current_user, user_in={"password": new_pwd})
+    return {"message": "Mot de passe modifié avec succès."}
+
 
 
 @router.post(

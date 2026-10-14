@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import declarative_base
 
+from sqlalchemy import text
 from app.core.config import settings
 
 # Determine engine parameters based on database dialect
@@ -57,6 +58,16 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def init_db() -> None:
-    """Initialize database tables on application startup."""
+    """Initialize database tables on application startup and ensure schema migrations."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Ensure profile columns exist
+        for col, col_type in [
+            ("company_name", "VARCHAR(255)"),
+            ("company_nif", "VARCHAR(100)"),
+            ("profile_image", "VARCHAR(500)"),
+        ]:
+            try:
+                await conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} {col_type}"))
+            except Exception:
+                pass

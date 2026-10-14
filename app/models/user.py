@@ -28,6 +28,9 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     
     role = Column(Enum(UserRole), default=UserRole.USER, nullable=False, index=True)
+    company_name = Column(String(255), nullable=True)
+    company_nif = Column(String(100), nullable=True)
+    profile_image = Column(String(500), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
 

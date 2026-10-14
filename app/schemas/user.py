@@ -11,6 +11,9 @@ class UserBase(BaseModel):
     username: Optional[str] = None
     full_name: Optional[str] = None
     phone_number: Optional[str] = None
+    company_name: Optional[str] = None
+    company_nif: Optional[str] = None
+    profile_image: Optional[str] = None
 
 
 # Schema for User Registration
@@ -30,7 +33,16 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     username: Optional[str] = None
     full_name: Optional[str] = None
+    fullName: Optional[str] = None
     phone_number: Optional[str] = None
+    phoneNumber: Optional[str] = None
+    mobileNumber: Optional[str] = None
+    company_name: Optional[str] = None
+    companyName: Optional[str] = None
+    company_nif: Optional[str] = None
+    companyNif: Optional[str] = None
+    profile_image: Optional[str] = None
+    profileImage: Optional[str] = None
     password: Optional[str] = Field(None, min_length=6, max_length=128)
     is_active: Optional[bool] = None
     role: Optional[UserRole] = None
@@ -38,8 +50,19 @@ class UserUpdate(BaseModel):
 
 # Schema for Changing Password
 class PasswordChangeRequest(BaseModel):
-    current_password: str
-    new_password: str = Field(..., min_length=6, max_length=128)
+    current_password: Optional[str] = None
+    currentPassword: Optional[str] = None
+    new_password: Optional[str] = None
+    newPassword: Optional[str] = None
+    confirm_password: Optional[str] = None
+    confirmPassword: Optional[str] = None
+
+    def get_current_password(self) -> str:
+        return (self.current_password or self.currentPassword or "").strip()
+
+    def get_new_password(self) -> str:
+        return (self.new_password or self.newPassword or "").strip()
+
 
 
 # Schema for User Out / Response
