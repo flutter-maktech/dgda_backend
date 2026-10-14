@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(".env", "backend/.env"),
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore"
@@ -46,9 +46,12 @@ class Settings(BaseSettings):
     RATE_LIMIT_LOGIN: str = "10/minute"
     RATE_LIMIT_REGISTER: str = "5/minute"
 
-    # Email Service (Resend)
+    # Email Service (Brevo / Resend)
+    BREVO_API_KEY: str = ""
+    BREVO_SENDER_EMAIL: str = "makflutter@gmail.com"
+    BREVO_SENDER_NAME: str = "DGDA Douane"
     RESEND_API_KEY: str = ""
-    EMAILS_FROM: str = "DGDA Douane <onboarding@resend.dev>"
+    EMAILS_FROM: str = "DGDA Douane <makflutter@gmail.com>"
     OTP_EXPIRE_MINUTES: int = 10
 
 
