@@ -172,10 +172,14 @@ async def refresh_token(
     refresh_req: RefreshTokenRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Verify the validity of a refresh token and issue a fresh token pair.
-    """
-    payload = decode_token(refresh_req.refresh_token)
+    raw_token = refresh_req.get_refresh_token()
+    if not raw_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Refresh token is required."
+        )
+
+    payload = decode_token(raw_token)
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

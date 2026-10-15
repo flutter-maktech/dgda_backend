@@ -89,7 +89,12 @@ class TokenResponse(BaseModel):
 
 # Schema for Refreshing Access Token
 class RefreshTokenRequest(BaseModel):
-    refresh_token: str
+    refresh_token: Optional[str] = None
+    refreshToken: Optional[str] = None
+    token: Optional[str] = None
+
+    def get_refresh_token(self) -> str:
+        return (self.refresh_token or self.refreshToken or self.token or "").strip()
 
 
 # Schema for Decoded Token Payload
