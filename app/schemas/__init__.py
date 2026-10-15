@@ -14,6 +14,13 @@ from app.schemas.user import (
     VerifyOtpRequest,
 )
 
+from app.schemas.declaration import (
+    DeclarationBase,
+    DeclarationCreate,
+    DeclarationUpdate,
+    DeclarationResponse,
+)
+
 __all__ = [
     "UserBase",
     "UserCreate",
@@ -28,4 +35,8 @@ __all__ = [
     "VerifyOtpRequest",
     "ForgotPasswordRequest",
     "ResetPasswordWithOtpRequest",
+    "DeclarationBase",
+    "DeclarationCreate",
+    "DeclarationUpdate",
+    "DeclarationResponse",
 ]
