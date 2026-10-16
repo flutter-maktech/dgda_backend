@@ -8,6 +8,7 @@ from app.api.v1.endpoints import (
     offices,
     news,
     bookmarks,
+    officials,
 )
 
 api_router = APIRouter()
@@ -35,4 +36,7 @@ api_router.include_router(news.router, prefix="/news", tags=["News"])
 
 # User Bookmarks & Saved Items Routes
 api_router.include_router(bookmarks.router, prefix="/bookmarks", tags=["Bookmarks"])
+
+# Government & DGDA Management Officials Routes
+api_router.include_router(officials.router, prefix="/officials", tags=["Leadership & Officials"])
 
