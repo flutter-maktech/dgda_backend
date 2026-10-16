@@ -2,6 +2,7 @@ from app.models.user import User, UserRole
 from app.models.otp import OtpVerification
 from app.models.declaration import Declaration, DeclarationStatus
 from app.models.calendar_event import CalendarEvent, EventCategory, EventStatus
+from app.models.chat_message import ChatMessage
 
 __all__ = [
     "User",
@@ -12,5 +13,6 @@ __all__ = [
     "CalendarEvent",
     "EventCategory",
     "EventStatus",
+    "ChatMessage",
 ]
 
