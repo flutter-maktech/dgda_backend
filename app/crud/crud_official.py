@@ -1,5 +1,5 @@
 from typing import List, Optional
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.official import GovernmentOfficial, ManagementMember
@@ -136,7 +136,20 @@ class CRUDOfficial:
         stmt = select(GovernmentOfficial).limit(1)
         res = await db.execute(stmt)
         if res.scalars().first() is not None:
+            # Backfill photo_url and correct photo_path if previously seeded without photo_url
+            try:
+                await db.execute(
+                    text(
+                        "UPDATE government_officials SET "
+                        "photo_url = '/public/images/officials/' || id || '.png' "
+                        "WHERE photo_url IS NULL OR photo_url = ''"
+                    )
+                )
+                await db.commit()
+            except Exception:
+                await db.rollback()
             return
+
 
         initial_officials = [
             GovernmentOfficial(
@@ -221,7 +234,20 @@ class CRUDOfficial:
         stmt = select(ManagementMember).limit(1)
         res = await db.execute(stmt)
         if res.scalars().first() is not None:
+            # Backfill photo_url if previously seeded without photo_url
+            try:
+                await db.execute(
+                    text(
+                        "UPDATE management_members SET "
+                        "photo_url = '/public/images/management/' || REPLACE(REPLACE(asset_path, 'assets/images/management/', ''), 'assets/images/', '') "
+                        "WHERE (photo_url IS NULL OR photo_url = '') AND asset_path IS NOT NULL"
+                    )
+                )
+                await db.commit()
+            except Exception:
+                await db.rollback()
             return
+
 
         initial_members = [
             # 1. Direction Générale

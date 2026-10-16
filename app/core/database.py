@@ -75,3 +75,11 @@ async def init_db() -> None:
                 await conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} {col_type}"))
             except Exception:
                 pass
+
+        # Ensure photo_url column exists for dynamic official and management photos
+        for table in ["government_officials", "management_members"]:
+            try:
+                await conn.execute(text(f"ALTER TABLE {table} ADD COLUMN photo_url VARCHAR(500)"))
+            except Exception:
+                pass
+
