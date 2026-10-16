@@ -1,5 +1,14 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, declarations, calendar, chat, documents, offices, news
+from app.api.v1.endpoints import (
+    auth,
+    declarations,
+    calendar,
+    chat,
+    documents,
+    offices,
+    news,
+    bookmarks,
+)
 
 api_router = APIRouter()
 
@@ -23,4 +32,7 @@ api_router.include_router(offices.router, prefix="/offices", tags=["Offices"])
 
 # Official News & Press Releases Routes
 api_router.include_router(news.router, prefix="/news", tags=["News"])
+
+# User Bookmarks & Saved Items Routes
+api_router.include_router(bookmarks.router, prefix="/bookmarks", tags=["Bookmarks"])
 

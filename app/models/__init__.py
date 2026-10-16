@@ -6,6 +6,7 @@ from app.models.chat_message import ChatMessage
 from app.models.customs_document import CustomsDocument
 from app.models.customs_office import CustomsOffice
 from app.models.news_article import NewsArticle
+from app.models.user_bookmark import UserBookmark, BookmarkType
 
 __all__ = [
     "User",
@@ -20,5 +21,7 @@ __all__ = [
     "CustomsDocument",
     "CustomsOffice",
     "NewsArticle",
+    "UserBookmark",
+    "BookmarkType",
 ]
 
