@@ -3,6 +3,8 @@ from app.models.otp import OtpVerification
 from app.models.declaration import Declaration, DeclarationStatus
 from app.models.calendar_event import CalendarEvent, EventCategory, EventStatus
 from app.models.chat_message import ChatMessage
+from app.models.customs_document import CustomsDocument
+from app.models.customs_office import CustomsOffice
 
 __all__ = [
     "User",
@@ -14,5 +16,7 @@ __all__ = [
     "EventCategory",
     "EventStatus",
     "ChatMessage",
+    "CustomsDocument",
+    "CustomsOffice",
 ]
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, declarations, calendar, chat
+from app.api.v1.endpoints import auth, declarations, calendar, chat, documents, offices
 
 api_router = APIRouter()
 
@@ -14,4 +14,10 @@ api_router.include_router(calendar.router, prefix="/calendar", tags=["Calendar E
 
 # Customs AI Chat Assistant Routes
 api_router.include_router(chat.router, prefix="/chat", tags=["Agent IA"])
+
+# Official Documents & Regulatory Library Routes
+api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
+
+# Customs Offices & Ports Directory Routes
+api_router.include_router(offices.router, prefix="/offices", tags=["Offices"])
 
