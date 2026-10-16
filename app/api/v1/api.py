@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import auth, declarations, calendar, chat, documents, offices
+from app.api.v1.endpoints import auth, declarations, calendar, chat, documents, offices, news
 
 api_router = APIRouter()
 
@@ -20,4 +20,7 @@ api_router.include_router(documents.router, prefix="/documents", tags=["Document
 
 # Customs Offices & Ports Directory Routes
 api_router.include_router(offices.router, prefix="/offices", tags=["Offices"])
+
+# Official News & Press Releases Routes
+api_router.include_router(news.router, prefix="/news", tags=["News"])
 
