@@ -57,6 +57,10 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
+# Alias for backward compatibility
+get_db = get_async_session
+
+
 async def init_db() -> None:
     """Initialize database tables on application startup and ensure schema migrations."""
     async with engine.begin() as conn:
