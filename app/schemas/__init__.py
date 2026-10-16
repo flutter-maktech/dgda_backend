@@ -21,6 +21,13 @@ from app.schemas.declaration import (
     DeclarationResponse,
 )
 
+from app.schemas.calendar_event import (
+    CalendarEventBase,
+    CalendarEventCreate,
+    CalendarEventUpdate,
+    CalendarEventResponse,
+)
+
 __all__ = [
     "UserBase",
     "UserCreate",
@@ -39,4 +46,8 @@ __all__ = [
     "DeclarationCreate",
     "DeclarationUpdate",
     "DeclarationResponse",
+    "CalendarEventBase",
+    "CalendarEventCreate",
+    "CalendarEventUpdate",
+    "CalendarEventResponse",
 ]

@@ -14,6 +14,13 @@ from app.crud.crud_declaration import (
     update_declaration,
     delete_declaration,
 )
+from app.crud.crud_calendar_event import (
+    get_user_calendar_events,
+    create_calendar_event,
+    get_calendar_event_by_id,
+    update_calendar_event,
+    delete_calendar_event,
+)
 
 __all__ = [
     "get_user_by_id",
@@ -30,4 +37,9 @@ __all__ = [
     "create_declaration",
     "update_declaration",
     "delete_declaration",
+    "get_user_calendar_events",
+    "create_calendar_event",
+    "get_calendar_event_by_id",
+    "update_calendar_event",
+    "delete_calendar_event",
 ]

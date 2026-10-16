@@ -14,6 +14,7 @@ from app.core.security import get_password_hash
 from app.models.user import User, UserRole
 from app.models.otp import OtpVerification
 from app.models.declaration import Declaration
+from app.models.calendar_event import CalendarEvent
 
 
 async def seed_initial_admin() -> None:
