@@ -131,16 +131,25 @@ class AIChatService:
     ) -> Dict[str, Any]:
         """
         Generates an authoritative, helpful response for DGDA Customs queries.
-        1. Tries OpenAI API (gpt-4o-mini) using the configured OPENAI_API_KEY.
-        2. If OpenAI quota is exhausted (429) or unavailable, gracefully falls back
-           to the DGDA Domain Knowledge Reasoning Engine so the user always receives
+        1. Tries Google Gemini API (gemini-1.5-flash) if GEMINI_API_KEY is configured (Free & Fast).
+        2. Tries OpenAI API (gpt-4o-mini) if OPENAI_API_KEY is configured with credits.
+        3. If quotas are exhausted or unavailable, gracefully falls back to the
+           DGDA Domain Knowledge Reasoning Engine so the user always receives
            a precise, reliable answer.
         """
         trimmed = user_message.strip()
-        openai_key = settings.OPENAI_API_KEY.strip()
 
-        # Try live OpenAI API call if key is provided
-        if openai_key:
+        # 1. Try Google Gemini API (Free tier available)
+        if settings.GEMINI_API_KEY.strip():
+            try:
+                gemini_result = await AIChatService._call_gemini(trimmed, conversation_history)
+                if gemini_result:
+                    return gemini_result
+            except Exception as e:
+                logger.warning(f"Gemini API call failed, trying next provider: {e}")
+
+        # 2. Try OpenAI API
+        if settings.OPENAI_API_KEY.strip():
             try:
                 ai_result = await AIChatService._call_openai(trimmed, conversation_history)
                 if ai_result:
@@ -148,8 +157,75 @@ class AIChatService:
             except Exception as e:
                 logger.warning(f"OpenAI call failed, falling back to DGDA knowledge engine: {e}")
 
-        # Fallback: DGDA Customs Domain Knowledge Reasoning Engine
+        # 3. Fallback: DGDA Customs Domain Knowledge Reasoning Engine
         return AIChatService._fallback_knowledge_response(trimmed)
+
+    @staticmethod
+    async def _call_gemini(
+        user_message: str,
+        conversation_history: Optional[List[ChatMessage]] = None
+    ) -> Optional[Dict[str, Any]]:
+        """Call Google Gemini 1.5 Flash API with conversation history context."""
+        gemini_key = settings.GEMINI_API_KEY.strip()
+        if not gemini_key:
+            return None
+
+        contents = []
+        if conversation_history:
+            for msg in conversation_history[-6:]:
+                role = "model" if msg.role == "assistant" else "user"
+                contents.append({
+                    "role": role,
+                    "parts": [{"text": msg.content}]
+                })
+
+        contents.append({
+            "role": "user",
+            "parts": [{"text": user_message}]
+        })
+
+        payload = {
+            "system_instruction": {
+                "parts": [{"text": DGDA_SYSTEM_PROMPT}]
+            },
+            "contents": contents,
+            "generationConfig": {
+                "temperature": 0.3,
+                "maxOutputTokens": 800
+            }
+        }
+
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            resp = await client.post(url, json=payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                try:
+                    candidates = data.get("candidates", [])
+                    if not candidates:
+                        return None
+                    content = candidates[0]["content"]["parts"][0]["text"].strip()
+
+                    # Extract legal reference if present
+                    legal_ref = None
+                    ref_match = re.search(r"\[Réf:?\s*([^\]]+)\]", content, re.IGNORECASE)
+                    if ref_match:
+                        legal_ref = ref_match.group(1).strip()
+                    else:
+                        legal_ref = "Code des Douanes RDC (Loi n° 10/002)"
+
+                    return {
+                        "reply": content,
+                        "legal_reference": legal_ref,
+                        "category": AIChatService._infer_category(user_message),
+                    }
+                except (KeyError, IndexError) as err:
+                    logger.warning(f"Failed to parse Gemini response: {err}")
+                    return None
+            else:
+                logger.warning(f"Gemini API returned status {resp.status_code}: {resp.text}")
+                return None
 
     @staticmethod
     async def _call_openai(
