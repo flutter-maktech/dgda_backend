@@ -76,8 +76,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import os
+from fastapi.staticfiles import StaticFiles
+
 # Include API v1 Endpoints
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+# Mount static public files (PDFs, docs, images)
+if os.path.exists("public"):
+    app.mount("/public", StaticFiles(directory="public"), name="public")
 
 
 @app.get("/", tags=["Health"])
