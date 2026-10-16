@@ -7,7 +7,8 @@ class GovernmentOfficialBase(BaseModel):
     role_title: str
     honorific: str
     name: str
-    photo_path: str
+    photo_path: Optional[str] = None
+    photo_url: Optional[str] = None
     biography: str
     responsibilities: List[str] = []
     mandate_period: str
@@ -26,6 +27,7 @@ class GovernmentOfficialUpdate(BaseModel):
     honorific: Optional[str] = None
     name: Optional[str] = None
     photo_path: Optional[str] = None
+    photo_url: Optional[str] = None
     biography: Optional[str] = None
     responsibilities: Optional[List[str]] = None
     mandate_period: Optional[str] = None
