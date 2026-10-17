@@ -13,6 +13,8 @@ from app.api.v1.endpoints import (
     partners,
     faqs,
     reports,
+    content,
+    support,
 )
 
 
@@ -57,5 +59,13 @@ api_router.include_router(faqs.router, prefix="/faq", tags=["FAQ"], include_in_s
 
 # Discrepancy & Incorrect Data Reports Routes
 api_router.include_router(reports.router, prefix="/reports", tags=["Data Reports"])
+
+# Legal & Content Documents Routes (Privacy Policy, Terms, About Us)
+api_router.include_router(content.router, prefix="", tags=["Legal & Content"])
+api_router.include_router(content.router, prefix="/content", tags=["Legal & Content"], include_in_schema=False)
+
+# Technical Support & 24/7 Helpdesk Routes
+api_router.include_router(support.router, prefix="/support", tags=["Technical Support"])
+api_router.include_router(support.router, prefix="/technical-support", tags=["Technical Support"], include_in_schema=False)
 
 

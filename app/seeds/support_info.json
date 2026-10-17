@@ -1,0 +1,15 @@
+{
+  "id": "dgda-helpdesk",
+  "title": "Assistance DGDA 24h/24 et 7j/7",
+  "description": "Ligne directe pour les interruptions SydoniaWorld, les anomalies de scellés électroniques et les réconciliations de paiement SEGUCE.",
+  "phone_numbers": "+243 81 700 0001 / +243 99 800 0002",
+  "phone_list": [
+    "+243817000001",
+    "+243998000002"
+  ],
+  "email": "support.sydonia@dgda.gouv.cd",
+  "whatsapp": "+243821920215",
+  "portal_url": "https://douane.gouv.cd/assistance",
+  "operating_hours": "24/7 - Service Continu",
+  "is_active": true
+}

@@ -11,6 +11,8 @@ from app.models.official import GovernmentOfficial, ManagementMember
 from app.models.partner import Partner
 from app.models.faq import FAQ
 from app.models.incorrect_data_report import IncorrectDataReport
+from app.models.content_document import ContentDocument
+from app.models.technical_support import TechnicalSupportInfo, SupportTicket
 
 __all__ = [
     "User",
@@ -32,5 +34,8 @@ __all__ = [
     "Partner",
     "FAQ",
     "IncorrectDataReport",
+    "ContentDocument",
+    "TechnicalSupportInfo",
+    "SupportTicket",
 ]
 

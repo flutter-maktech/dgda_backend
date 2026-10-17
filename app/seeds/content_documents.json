@@ -1,0 +1,52 @@
+[
+  {
+    "id": "doc-privacy-policy",
+    "type": "privacy-policy",
+    "title": "Politique de Confidentialité",
+    "hero_title": "Politique de Confidentialité",
+    "card_title": "Politique de Confidentialité & Protection des Données",
+    "subtitle": "Directives relatives à la protection et à la confidentialité des données douanières de la DGDA.",
+    "last_updated": "2026-09-01",
+    "is_published": true,
+    "content": "<h2>1. Collecte et Traitement des Données Douanières</h2><p>La Direction Générale des Douanes et Accises (DGDA) collecte et traite les données nécessaires aux opérations de dédouanement, à l'identification fiscale des opérateurs économiques (NIF), à la validation des manifestes de fret et à l'authentification des quittances électroniques via le système automatisé SYDONIA.</p><h2>2. Finalités et Base Légale</h2><p>Le traitement des données personnelles et professionnelles repose sur les prérogatives régaliennes conférées à la DGDA par le Code des Douanes de la République Démocratique du Congo, le Décret n° 011/46 et les accords internationaux d'assistance administrative mutuelle douanière (OMD, ZLECAF, SADC, COMESA).</p><h2>3. Confidentialité et Secret Douanier</h2><p>Conformément aux dispositions régissant le secret professionnel douanier, toutes les informations relatives aux déclarations, valeurs en douane déclarées, comptes bancaires et correspondances des commissionnaires en douane sont strictement confidentielles et protégées contre tout accès non autorisé.</p><h2>4. Interconnexion et Partage des Données</h2><p>Dans le strict respect des protocoles de sécurité de l'État, certaines informations douanières peuvent faire l'objet d'échanges automatisés avec les régies financières partenaires (DGI, DGRAD, Banque Centrale du Congo) et les services habilités du Guichet Unique Intégral du Commerce Extérieur (SEGUCE).</p><h2>5. Sécurité et Conservation des Données</h2><p>Les données transmises via l'application mobile DGDA sont chiffrées selon les normes cryptographiques internationales (TLS 1.3, AES-256). Elles sont archivées dans les centres de données souverains sécurisés de la DGDA pendant la durée légale prescrite par la législation douanière.</p><h2>6. Droits des Opérateurs Économiques</h2><p>Tout déclarant ou importateur dispose d'un droit d'accès, de vérification et de demande de rectification des données inexactes enregistrées sur son compte, exerçable auprès de la Direction des Systèmes et Technologies de l'Information de la DGDA.</p>",
+    "paragraphs": [
+      "La Direction Générale des Douanes et Accises (DGDA) collecte et traite les informations nécessaires aux opérations de dédouanement, à l'identification fiscale (NIF) et à l'authentification des déclarations via le système SYDONIA.",
+      "Le traitement des données repose sur le Code des Douanes de la RDC, garantissant la légalité, la traçabilité et la transparence des transactions commerciales transfrontalières.",
+      "Toutes les informations déclaratives, valeurs CAF et documents commerciaux bénéficient du secret douanier légal et d'un niveau de protection cryptographique de haut niveau.",
+      "Dans le cadre de la facilitation du commerce, les données de mainlevée sont synchronisées de manière sécurisée avec le Guichet Unique et les régies financières de l'État.",
+      "La DGDA assure la conservation sécurisée et l'archivage certifié des quittances numériques et bordereaux conformément aux délais réglementaires en vigueur."
+    ]
+  },
+  {
+    "id": "doc-about-us",
+    "type": "about-us",
+    "title": "À Propos de la DGDA",
+    "hero_title": "À Propos de la DGDA",
+    "card_title": "Direction Générale des Douanes et Accises",
+    "subtitle": "Institution publique chargée de la perception des droits de douane, de la surveillance des frontières et de la facilitation du commerce.",
+    "last_updated": "2026-09-01",
+    "is_published": true,
+    "content": "<h2>Missions Principales de la DGDA</h2><p>La Direction Générale des Douanes et Accises (DGDA) est un service public doté d'une autonomie administrative et financière, placé sous la tutelle du Ministère des Finances de la République Démocratique du Congo. Elle a pour mission principale la perception des droits, taxes et redevances douanières et d'accises, la protection de l'espace économique national, la facilitation des échanges licites et la lutte contre les fraudes et trafics illicites.</p><h2>Vision et Modernisation</h2><p>À travers la digitalisation de ses procédures et l'intégration continue de solutions technologiques avancées telles que le guichet unique SydoniaWorld, la DGDA s'engage à offrir aux opérateurs économiques un service rapide, transparent et équitable.</p>",
+    "paragraphs": [
+      "La Direction Générale des Douanes et Accises (DGDA) est l'autorité douanière nationale de la République Démocratique du Congo, sous la tutelle du Ministère des Finances.",
+      "Elle accomplit une triple mission fiscale, économique et de protection : mobilisation des recettes douanières, soutien à l'industrie locale et surveillance des frontières.",
+      "Engagée dans une politique de modernisation continue, la DGDA déploie des outils numériques innovants pour simplifier et accélérer les formalités douanières."
+    ]
+  },
+  {
+    "id": "doc-terms-and-condition",
+    "type": "terms-and-condition",
+    "title": "Conditions Générales d'Utilisation",
+    "hero_title": "Conditions Générales d'Utilisation",
+    "card_title": "Conditions Générales d'Utilisation des Services Numériques",
+    "subtitle": "Règles régissant l'utilisation de l'application mobile et des portails numériques de la DGDA.",
+    "last_updated": "2026-09-01",
+    "is_published": true,
+    "content": "<h2>1. Acceptation des Conditions</h2><p>L'accès et l'utilisation de l'application mobile DGDA emportent adhésion pleine et entière aux présentes Conditions Générales d'Utilisation ainsi qu'au respect strict du Code des Douanes de la RDC.</p><h2>2. Responsabilité du Déclarant</h2><p>L'utilisateur est personnellement responsable de la sincérité et de l'exactitude des pièces justificatives, numéros NIF et déclarations communiqués via l'application.</p><h2>3. Sécurité des Identifiants</h2><p>Les codes d'accès et certificats d'authentification délivrés pour l'accès aux services Sydonia et déclarations en ligne sont personnels, confidentiels et non transférables.</p>",
+    "paragraphs": [
+      "L'utilisation des services numériques de la DGDA implique l'acceptation sans réserve des dispositions légales et réglementaires régissant la douane congolaise.",
+      "Tout opérateur s'engage à soumettre des données exactes, conformes aux manifestes de transport et factures commerciales réelles.",
+      "Les identifiants et accès sécurisés aux plateformes douanières sont strictement confidentiels et placés sous la garde exclusive de leur titulaire."
+    ]
+  }
+]

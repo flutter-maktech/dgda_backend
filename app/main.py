@@ -56,11 +56,15 @@ async def lifespan(app: FastAPI):
         from app.crud.crud_official import crud_official
         from app.crud.crud_partner import crud_partner
         from app.crud.crud_faq import crud_faq
+        from app.crud.crud_content import crud_content
+        from app.crud.crud_support import crud_support
         async with AsyncSessionLocal() as session:
             await crud_official.seed_government_officials_if_empty(session)
             await crud_official.seed_management_members_if_empty(session)
             await crud_partner.seed_partners_if_empty(session)
             await crud_faq.seed_faqs_if_empty(session)
+            await crud_content.seed_content_if_empty(session)
+            await crud_support.seed_support_info_if_empty(session)
     except Exception as e:
         print(f"Error during startup seeds: {e}")
 
