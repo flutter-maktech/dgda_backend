@@ -10,6 +10,7 @@ from app.api.v1.endpoints import (
     bookmarks,
     officials,
     uploads,
+    partners,
 )
 
 
@@ -41,6 +42,9 @@ api_router.include_router(bookmarks.router, prefix="/bookmarks", tags=["Bookmark
 
 # Government & DGDA Management Officials Routes
 api_router.include_router(officials.router, prefix="/officials", tags=["Leadership & Officials"])
+
+# Official Partners, Sponsors & Recommended Professionals Routes
+api_router.include_router(partners.router, prefix="/partners", tags=["Partners & Sponsors"])
 
 # Cloudinary Media Upload Routes (Admin / Media Service)
 api_router.include_router(uploads.router, prefix="/uploads", tags=["Media Uploads"])

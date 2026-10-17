@@ -1,0 +1,722 @@
+[
+  {
+    "id": "ugp-mod",
+    "name": "UGP-MOD",
+    "category": "Sponsors",
+    "tier": "Principal Sponsor",
+    "is_principal_sponsor": true,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219203/dgda/partners/ugp_mod_logo.png",
+    "asset_path": "assets/images/ugp_mod_logo.png",
+    "role": "Sponsor Principal • Agence en douane",
+    "tagline": "Agence en douane • Logistique • Transport",
+    "headline": "UNE EXPERTISE DOUANIÈRE AU SERVICE DE VOTRE CROISSANCE",
+    "hero_subtitle": "Solutions logistiques et douanières fiables pour un commerce plus fluide en RDC et dans la région.",
+    "tags": [
+      "DOUANE",
+      "TRANSPORT",
+      "LOGISTIQUE",
+      "CONSEIL"
+    ],
+    "about_text": "UGP-MOD est le partenaire stratégique et sponsor principal de la Direction Générale des Douanes et Accises (DGDA), spécialisé dans l'accompagnement des opérations douanières, le transport et la logistique en République Démocratique du Congo. Nous accompagnons nos clients et partenaires avec des solutions sur mesure, professionnelles et conformes à la réglementation en vigueur.",
+    "services": [
+      {
+        "title": "Dédouanement",
+        "iconType": "customs"
+      },
+      {
+        "title": "Transport maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Transport aérien",
+        "iconType": "air"
+      },
+      {
+        "title": "Transport routier",
+        "iconType": "road"
+      },
+      {
+        "title": "Entreposage & distribution",
+        "iconType": "storage"
+      },
+      {
+        "title": "Conseil et assistance",
+        "iconType": "support"
+      }
+    ],
+    "phone": "+243 81 500 0000",
+    "email": "contact@ugp-mod.cd",
+    "website": "https://www.ugp-mod.cd",
+    "address": "Boulevard du 30 Juin, Kinshasa / Gombe, RDC",
+    "slogan": "Votre partenaire douanier pour un avenir sans frontières",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 1
+  },
+  {
+    "id": "connexafrica",
+    "name": "CONNEXAFRICA",
+    "category": "Logistics",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219197/dgda/partners/partner_connexafrica.png",
+    "asset_path": "assets/images/partner_connexafrica.png",
+    "role": "Partenaire Logistique",
+    "tagline": "Your Logistics Partner",
+    "headline": "CONNECTING AFRICA TO THE WORLD SINCE 1953",
+    "hero_subtitle": "End-to-end logistics solutions from a local partner with global reach",
+    "tags": [
+      "DOUANE",
+      "LOGISTIQUE",
+      "TRANSIT",
+      "TRANSPORT"
+    ],
+    "about_text": "ConnexAfrica est un acteur majeur de la logistique en Afrique depuis 1953. Nous offrons des solutions logistiques intégrées, le dédouanement, le transport multimodal, la manutention portuaire et des services d'entreposage, avec une présence en RDC et dans plusieurs pays de la région.",
+    "services": [
+      {
+        "title": "Fret maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Fret aérien",
+        "iconType": "air"
+      },
+      {
+        "title": "Transport routier",
+        "iconType": "road"
+      },
+      {
+        "title": "Entreposage & distribution",
+        "iconType": "storage"
+      }
+    ],
+    "phone": "+243 982 021 931",
+    "email": "kinshasa@connexafrica.com",
+    "website": "https://www.connexafrica.com",
+    "address": "87, Boulevard du 30 Juin, Gombe, Kinshasa, RDC",
+    "slogan": "Your Logistics Partner",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 2
+  },
+  {
+    "id": "gecotrans",
+    "name": "GECOTRANS",
+    "category": "Logistics",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219199/dgda/partners/partner_gecotrans.png",
+    "asset_path": "assets/images/partner_gecotrans.png",
+    "role": "Partenaire Logistique & Douane",
+    "tagline": "Transit • Douane • Transport • Logistique",
+    "headline": "VOTRE PARTENAIRE EN LOGISTIQUE ET DOUANE",
+    "hero_subtitle": "Des solutions intégrées pour un commerce plus fluide en République Démocratique du Congo et dans la région.",
+    "tags": [
+      "IMPORT",
+      "EXPORT",
+      "TRANSIT",
+      "LOGISTIQUE"
+    ],
+    "about_text": "GECOTRANS est un acteur majeur dans le domaine du dédouanement, du transit, du transport et de la logistique en République Démocratique du Congo. Nous accompagnons nos clients avec des solutions sur mesure pour faciliter leurs opérations d'importation et d'exportation, avec une expertise reconnue dans la gestion des flux maritimes, terrestres et aériens.",
+    "services": [
+      {
+        "title": "Transit maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Fret aérien",
+        "iconType": "air"
+      },
+      {
+        "title": "Transport routier",
+        "iconType": "road"
+      },
+      {
+        "title": "Entreposage & distribution",
+        "iconType": "storage"
+      },
+      {
+        "title": "Dédouanement (Douane)",
+        "iconType": "customs"
+      }
+    ],
+    "phone": "+243 82 08 55 590",
+    "email": "info@gecotrans.com",
+    "website": "https://www.gecotrans.com",
+    "address": "51, Avenue du Livre, Kinshasa/Gombe, RDC",
+    "slogan": "Faciliter vos échanges, renforcer vos opportunités",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 3
+  },
+  {
+    "id": "socodam",
+    "name": "SOCODAM",
+    "category": "Logistics",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219201/dgda/partners/partner_socodam.png",
+    "asset_path": "assets/images/partner_socodam.png",
+    "role": "Transitaire Officiel RDC",
+    "tagline": "Transitaire officiel de la République Démocratique du Congo",
+    "headline": "37 ANS D'EXISTENCE, 37 ANS D'EXPÉRIENCE",
+    "hero_subtitle": "Un acteur clé du transit, du dédouanement et de la logistique en République Démocratique du Congo.",
+    "tags": [
+      "DOUANE",
+      "TRANSIT",
+      "TRANSPORT",
+      "LOGISTIQUE"
+    ],
+    "about_text": "SOCODAM est une société congolaise agréée par la Direction Générale des Douanes et Accises (DGDA). Nous sommes commissionnaire en douane des produits pétroliers et des produits divers, transitaire, transporteur routier (TRD) et concessionnaire des entrepôts concédés.",
+    "services": [
+      {
+        "title": "Dédouanement",
+        "iconType": "customs"
+      },
+      {
+        "title": "Transit maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Transport routier",
+        "iconType": "road"
+      },
+      {
+        "title": "Entrepôts sous douane",
+        "iconType": "storage"
+      },
+      {
+        "title": "Produits pétroliers",
+        "iconType": "fuel"
+      }
+    ],
+    "phone": "+243 828 182 480",
+    "email": "info.dg@socodam.cd",
+    "website": "https://www.socodam.cd",
+    "address": "44-48, Avenue Tombalbaye, Kinshasa, RDC",
+    "slogan": "Ensemble pour un commerce sécurisé et performant",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 4
+  },
+  {
+    "id": "translo",
+    "name": "TRANSLO",
+    "category": "Logistics",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219203/dgda/partners/partner_translo.png",
+    "asset_path": "assets/images/partner_translo.png",
+    "role": "Partenaire Logistique",
+    "tagline": "Votre partenaire logistique",
+    "headline": "LOGISTIQUE SANS FRONTIÈRES",
+    "hero_subtitle": "Des solutions fiables pour vos opérations d'importation, d'exportation et de transit en RDC et dans la région.",
+    "tags": [
+      "DOUANE",
+      "TRANSPORT",
+      "TRANSIT",
+      "LOGISTIQUE",
+      "ENTREPOSAGE"
+    ],
+    "about_text": "TRANSLO SARL est une entreprise congolaise spécialisée dans la logistique intégrée, le dédouanement, le transport et l'entreposage. Nous accompagnons nos clients avec des solutions sur mesure, fiables et efficaces, pour faciliter leurs opérations d'importation et d'exportation en République Démocratique du Congo et dans la sous-région.",
+    "services": [
+      {
+        "title": "Dédouanement",
+        "iconType": "customs"
+      },
+      {
+        "title": "Fret maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Fret aérien",
+        "iconType": "air"
+      },
+      {
+        "title": "Transport routier",
+        "iconType": "road"
+      },
+      {
+        "title": "Entreposage & distribution",
+        "iconType": "storage"
+      }
+    ],
+    "phone": "+243 808 805 108",
+    "email": "info@translo-rdc.com",
+    "website": "https://www.translo-rdc.com",
+    "address": "278, Avenue Équateur, Immeuble 5 à Sec, 3ème niveau, Local 34, Gombe, Kinshasa, RDC",
+    "slogan": "Plus qu'un transit, un partenaire de croissance",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 5
+  },
+  {
+    "id": "rawbank",
+    "name": "Rawbank",
+    "category": "Banking",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219200/dgda/partners/partner_rawbank.png",
+    "asset_path": "assets/images/partner_rawbank.png",
+    "role": "Partenaire Bancaire",
+    "tagline": "Votre partenaire pour la croissance en RDC",
+    "headline": "IS MY BANK",
+    "hero_subtitle": "Première institution bancaire de la RDC accompagnant les déclarations douanières et le commerce.",
+    "tags": [
+      "BANQUE",
+      "FINANCE",
+      "PAIEMENT",
+      "DOUANE"
+    ],
+    "about_text": "Rawbank est le leader du secteur bancaire congolais. Elle facilite le paiement électronique des droits et taxes de douane via Guichet Unique et solutions bancaires numériques.",
+    "services": [
+      {
+        "title": "Paiement des taxes douanières",
+        "iconType": "finance"
+      },
+      {
+        "title": "Crédits documentaires & Trade",
+        "iconType": "finance"
+      },
+      {
+        "title": "Solutions digitales",
+        "iconType": "it"
+      }
+    ],
+    "phone": "+243 81 999 9000",
+    "email": "contact@rawbank.cd",
+    "website": "https://www.rawbank.com",
+    "address": "3487, Boulevard du 30 Juin, Kinshasa/Gombe, RDC",
+    "slogan": "Rawbank - Is My Bank",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 6
+  },
+  {
+    "id": "tmb",
+    "name": "Trust Merchant Bank (TMB)",
+    "category": "Banking",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219202/dgda/partners/partner_tmb.png",
+    "asset_path": "assets/images/partner_tmb.png",
+    "role": "Partenaire Bancaire",
+    "tagline": "Des solutions financières pour vos opérations",
+    "headline": "TRUST MERCHANT BANK",
+    "hero_subtitle": "Partenaire financier officiel de vos démarches douanières et flux transfrontaliers.",
+    "tags": [
+      "BANQUE",
+      "FINANCE",
+      "COMMERCE"
+    ],
+    "about_text": "Trust Merchant Bank (TMB) offre un réseau d'agences étendu à travers toute la République Démocratique du Congo pour simplifier le paiement des formalités de douane.",
+    "services": [
+      {
+        "title": "Services bancaires aux frontières",
+        "iconType": "finance"
+      },
+      {
+        "title": "Caution douanière",
+        "iconType": "legal"
+      },
+      {
+        "title": "Change & Devises",
+        "iconType": "finance"
+      }
+    ],
+    "phone": "+243 81 200 0000",
+    "email": "info@tmb.cd",
+    "website": "https://www.tmb.cd",
+    "address": "Avenue Colonel Ebeya, Kinshasa, RDC",
+    "slogan": "Notre banque, notre avenir",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 7
+  },
+  {
+    "id": "maersk",
+    "name": "Maersk Logistics",
+    "category": "Logistics",
+    "tier": "Logistics Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219199/dgda/partners/partner_maersk.png",
+    "asset_path": "assets/images/partner_maersk.png",
+    "role": "Partenaire Logistique",
+    "tagline": "Connecter la RDC au monde",
+    "headline": "ALL THE WAY",
+    "hero_subtitle": "Connecter et simplifier la chaîne logistique mondiale au service des opérateurs de la RDC.",
+    "tags": [
+      "FRET",
+      "LOGISTIQUE",
+      "MARITIME"
+    ],
+    "about_text": "Maersk est une entreprise de transport maritime et de logistique intégrée de premier plan, facilitant le transport de conteneurs vers et depuis les ports de Matadi et Boma.",
+    "services": [
+      {
+        "title": "Transport maritime conteneurs",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Solutions de fret intermodal",
+        "iconType": "road"
+      },
+      {
+        "title": "Dédouanement connecté",
+        "iconType": "customs"
+      }
+    ],
+    "phone": "+243 81 555 4321",
+    "email": "drcinfo@maersk.com",
+    "website": "https://www.maersk.com",
+    "address": "Port de Matadi & Kinshasa Gombe, RDC",
+    "slogan": "All the way with Maersk",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 8
+  },
+  {
+    "id": "bollore",
+    "name": "Bolloré Africa Logistics",
+    "category": "Logistics",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219195/dgda/partners/partner_bollore.png",
+    "asset_path": "assets/images/partner_bollore.png",
+    "role": "Partenaire Logistique",
+    "tagline": "Réseau logistique intégré en Afrique",
+    "headline": "LEADER DU TRANSPORT ET DE LA LOGISTIQUE",
+    "hero_subtitle": "Solutions de corridors terrestres, fluviaux et d'agences portuaires en RDC.",
+    "tags": [
+      "LOGISTIQUE",
+      "TRANSIT",
+      "CORRIDOR",
+      "PORT"
+    ],
+    "about_text": "Bolloré Africa Logistics accompagne les grands projets miniers, industriels et commerciaux en République Démocratique du Congo avec des infrastructures logistiques de premier ordre.",
+    "services": [
+      {
+        "title": "Logistique minière & industrielle",
+        "iconType": "storage"
+      },
+      {
+        "title": "Agences maritimes & portuaires",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Gestion d'entrepôts sous douane",
+        "iconType": "customs"
+      }
+    ],
+    "phone": "+243 81 700 8000",
+    "email": "contact.drc@bollore.com",
+    "website": "https://www.bollore-transport-logistics.com",
+    "address": "Gombe, Kinshasa, RDC",
+    "slogan": "Au cœur du développement logistique africain",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 9
+  },
+  {
+    "id": "saham",
+    "name": "Saham Assurance",
+    "category": "Insurance",
+    "tier": "Official Partner",
+    "is_principal_sponsor": false,
+    "is_partner": true,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219201/dgda/partners/partner_saham.png",
+    "asset_path": "assets/images/partner_saham.png",
+    "role": "Partenaire Assurance",
+    "tagline": "Sécuriser vos échanges et investissements",
+    "headline": "ASSURANCE TRANSPORT ET CAUTION DOUANIÈRE",
+    "hero_subtitle": "Couverture complète pour le fret maritime, aérien et le transit sous douane.",
+    "tags": [
+      "ASSURANCE",
+      "RISQUE",
+      "DOUANE",
+      "COMMERCE"
+    ],
+    "about_text": "Saham Assurance propose des polices d'assurance cargo et des cautions en douane certifiées pour sécuriser les cargaisons en transit en RDC.",
+    "services": [
+      {
+        "title": "Assurance facultés transport",
+        "iconType": "legal"
+      },
+      {
+        "title": "Cautionnement en douane",
+        "iconType": "legal"
+      },
+      {
+        "title": "Responsabilité civile transporteur",
+        "iconType": "support"
+      }
+    ],
+    "phone": "+243 81 333 2211",
+    "email": "contact@sahamassurance.cd",
+    "website": "https://www.sahamassurance.com",
+    "address": "Boulevard du 30 Juin, Kinshasa, RDC",
+    "slogan": "La sérénité pour votre commerce international",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 10
+  },
+  {
+    "id": "coredis",
+    "name": "COREDIS Sarl",
+    "category": "Logistics",
+    "tier": "Recommended Professional",
+    "is_principal_sponsor": false,
+    "is_partner": false,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219197/dgda/partners/partner_coredis.png",
+    "asset_path": "assets/images/partner_coredis.png",
+    "role": "Agence en Douane • Logistique",
+    "tagline": "Agence en douane • Logistique • Transport",
+    "headline": "UNE EXPERTISE DOUANIÈRE AU SERVICE DE VOTRE CROISSANCE",
+    "hero_subtitle": "Solutions logistiques et douanières fiables pour un commerce plus fluide en RDC et dans la région.",
+    "tags": [
+      "DOUANE",
+      "TRANSPORT",
+      "LOGISTIQUE",
+      "CONSEIL"
+    ],
+    "about_text": "COREDIS Sarl est une agence en douane et un opérateur logistique basé à Lubumbashi, spécialisée dans le dédouanement, le transport et la gestion des flux de marchandises. Nous accompagnons nos clients avec des solutions sur mesure, professionnelles et conformes à la réglementation en vigueur.",
+    "services": [
+      {
+        "title": "Dédouanement",
+        "iconType": "customs"
+      },
+      {
+        "title": "Transport maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Transport aérien",
+        "iconType": "air"
+      },
+      {
+        "title": "Transport routier",
+        "iconType": "road"
+      },
+      {
+        "title": "Entreposage & distribution",
+        "iconType": "storage"
+      },
+      {
+        "title": "Conseil et assistance",
+        "iconType": "support"
+      }
+    ],
+    "phone": "+243 993 139 255 / +243 817 100 708",
+    "email": "info@coredis-sarl.net",
+    "website": "https://www.coredis-sarl.net",
+    "address": "292, Avenue Kato, Commune de Kampemba, Lubumbashi, Haut-Katanga, RDC",
+    "slogan": "Votre partenaire douanier pour un avenir sans frontières",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 11
+  },
+  {
+    "id": "douane-express",
+    "name": "Douane Express Customs",
+    "category": "Logistics",
+    "tier": "Recommended Professional",
+    "is_principal_sponsor": false,
+    "is_partner": false,
+    "status": "Active",
+    "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219198/dgda/partners/partner_douane_express.png",
+    "asset_path": "assets/images/partner_douane_express.png",
+    "role": "Transitaire et commissionnaire en douane",
+    "tagline": "Votre partenaire logistique à l'échelle mondiale",
+    "headline": "DES SOLUTIONS LOGISTIQUES POUR UN MONDE SANS FRONTIÈRES",
+    "hero_subtitle": "Transport international, fret aérien et maritime, transit et douane.",
+    "tags": [
+      "IMPORT",
+      "EXPORT",
+      "TRANSIT",
+      "LOGISTIQUE",
+      "CONSEIL"
+    ],
+    "about_text": "Une entreprise congolaise spécialisée dans le transport international, le fret aérien et maritime, le transit, le dédouanement et la logistique intégrée. Nous offrons des solutions fiables et compétitives pour accompagner nos clients dans leurs opérations d'importation et d'exportation, en RDC et à l'international.",
+    "services": [
+      {
+        "title": "Fret maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Fret aérien",
+        "iconType": "air"
+      },
+      {
+        "title": "Transport routier",
+        "iconType": "road"
+      },
+      {
+        "title": "Transit & douane",
+        "iconType": "customs"
+      },
+      {
+        "title": "Entreposage & distribution",
+        "iconType": "storage"
+      },
+      {
+        "title": "Import - Export",
+        "iconType": "support"
+      }
+    ],
+    "phone": "+243 81 23 45 678 / +243 99 87 65 432",
+    "email": "contact@logistique-rdc.com",
+    "website": "https://www.logistique-rdc.com",
+    "address": "Avenue des Transports, Gombe, Kinshasa, RDC",
+    "slogan": "Transporter vos ambitions plus loin",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 12
+  },
+  {
+    "id": "cma-cgm",
+    "name": "CMA CGM",
+    "category": "Logistics",
+    "tier": "Recommended Professional",
+    "is_principal_sponsor": false,
+    "is_partner": false,
+    "status": "Active",
+    "logo_url": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400",
+    "asset_path": null,
+    "role": "Transport maritime",
+    "tagline": "Leader mondial du transport maritime et de la logistique",
+    "headline": "SHIPPING THE FUTURE",
+    "hero_subtitle": "Solutions de transport maritime régulières desservant la RDC.",
+    "tags": [
+      "MARITIME",
+      "CONTENEUR",
+      "IMPORT-EXPORT"
+    ],
+    "about_text": "CMA CGM dessert régulièrement les principaux ports maritimes congolais avec une offre de conteneurs adaptée aux flux industriels et commerciaux.",
+    "services": [
+      {
+        "title": "Transport maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Conteneurs frigorifiques",
+        "iconType": "storage"
+      },
+      {
+        "title": "Solutions logistiques terre",
+        "iconType": "road"
+      }
+    ],
+    "phone": "+243 81 888 7700",
+    "email": "rdc.genbox@cma-cgm.com",
+    "website": "https://www.cmacgm-group.com",
+    "address": "Boulevard du 30 Juin, Kinshasa, RDC",
+    "slogan": "Better Ways for shipping",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 13
+  },
+  {
+    "id": "kuehne-nagel",
+    "name": "KUEHNE+NAGEL",
+    "category": "Logistics",
+    "tier": "Recommended Professional",
+    "is_principal_sponsor": false,
+    "is_partner": false,
+    "status": "Active",
+    "logo_url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400",
+    "asset_path": null,
+    "role": "Logistique",
+    "tagline": "Logistique mondiale et chaîne d'approvisionnement",
+    "headline": "YOUR SUPPLY CHAIN PARTNER",
+    "hero_subtitle": "Expertise mondiale en logistique et fret aérien/maritime pour la RDC.",
+    "tags": [
+      "LOGISTIQUE",
+      "CHAÎNE D'APPROVISIONNEMENT"
+    ],
+    "about_text": "Kuehne+Nagel simplifie vos opérations logistiques complexes à travers la RDC avec des solutions fiables de bout en bout.",
+    "services": [
+      {
+        "title": "Fret aérien",
+        "iconType": "air"
+      },
+      {
+        "title": "Fret maritime",
+        "iconType": "maritime"
+      },
+      {
+        "title": "Logistique contractuelle",
+        "iconType": "storage"
+      }
+    ],
+    "phone": "+243 81 777 6655",
+    "email": "info.rdc@kuehne-nagel.com",
+    "website": "https://www.kuehne-nagel.com",
+    "address": "Immeuble CTC, Gombe, Kinshasa, RDC",
+    "slogan": "Inspiring people to shape the future",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 14
+  },
+  {
+    "id": "sgs",
+    "name": "SGS",
+    "category": "Logistics",
+    "tier": "Recommended Professional",
+    "is_principal_sponsor": false,
+    "is_partner": false,
+    "status": "Active",
+    "logo_url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400",
+    "asset_path": null,
+    "role": "Inspection & Certification",
+    "tagline": "Leader mondial de l'inspection et de la vérification",
+    "headline": "WHEN YOU NEED TO BE SURE",
+    "hero_subtitle": "Services d'inspection avant expédition et conformité pour les douanes.",
+    "tags": [
+      "INSPECTION",
+      "CERTIFICATION",
+      "QUALITÉ"
+    ],
+    "about_text": "SGS garantit la conformité et la sécurité des marchandises destinées à l'importation en RDC selon les standards internationaux.",
+    "services": [
+      {
+        "title": "Contrôle avant expédition",
+        "iconType": "customs"
+      },
+      {
+        "title": "Analyses en laboratoire",
+        "iconType": "support"
+      },
+      {
+        "title": "Certification de qualité",
+        "iconType": "support"
+      }
+    ],
+    "phone": "+243 81 444 3322",
+    "email": "sgs.rdc@sgs.com",
+    "website": "https://www.sgs.com",
+    "address": "Avenue de la Paix, Gombe, Kinshasa, RDC",
+    "slogan": "When you need to be sure",
+    "is_official_badge": true,
+    "is_trusted_badge": true,
+    "display_order": 15
+  }
+]
