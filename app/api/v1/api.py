@@ -15,6 +15,7 @@ from app.api.v1.endpoints import (
     reports,
     content,
     support,
+    notifications,
 )
 
 
@@ -67,5 +68,9 @@ api_router.include_router(content.router, prefix="/content", tags=["Legal & Cont
 # Technical Support & 24/7 Helpdesk Routes
 api_router.include_router(support.router, prefix="/support", tags=["Technical Support"])
 api_router.include_router(support.router, prefix="/technical-support", tags=["Technical Support"], include_in_schema=False)
+
+# Push Notifications & Operational Alerts Routes (supports both /notifications and /notification)
+api_router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
+api_router.include_router(notifications.router, prefix="/notification", tags=["Notifications"], include_in_schema=False)
 
 

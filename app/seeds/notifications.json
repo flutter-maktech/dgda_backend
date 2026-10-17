@@ -1,0 +1,80 @@
+[
+  {
+    "id": "notif-1",
+    "title": "Avis : Maintenance programmée SYDONIA World au Port de Matadi",
+    "subtitle": "Interruption temporaire des transmissions de déclarations...",
+    "body": "Les serveurs centraux de dédouanement SYDONIA World feront l'objet d'une maintenance technique de routine ce soir de 22h00 à 02h00 GMT. Les dépôts électroniques seront mis en file d'attente sécurisée.",
+    "target_audience": "All Users",
+    "category": "System Maintenance",
+    "priority": "High Priority (Immediate Ingress)",
+    "sent_at": "Il y a quelques instants",
+    "audience_reach": "2 840 appareils",
+    "open_rate": "12.4%",
+    "status": "delivered"
+  },
+  {
+    "id": "notif-2",
+    "title": "Avis : Réaménagement de circulation Porte 3 au Port de Matadi",
+    "subtitle": "Voie d'accès temporaire pour inspection des conteneurs...",
+    "body": "Les accès d'inspection 4 à 6 du terminal à conteneurs de Matadi fonctionnent en circulation alternée pour travaux d'entretien des portiques. Veuillez anticiper vos formalités d'enlèvement.",
+    "target_audience": "Importers",
+    "category": "Operational Alert",
+    "priority": "High Priority (Immediate Ingress)",
+    "sent_at": "Aujourd'hui, 11:30",
+    "audience_reach": "18 450 appareils",
+    "open_rate": "72.1%",
+    "status": "delivered"
+  },
+  {
+    "id": "notif-3",
+    "title": "Poste de Kasumbalesa : Accélération des convois de transit SADC",
+    "subtitle": "Fluidification du guichet unique transfrontalier...",
+    "body": "Ouverture d'une voie prioritaire additionnelle pour le dédouanement accéléré des camions citernes et convois miniers sous régime T1.",
+    "target_audience": "Customs Brokers",
+    "category": "Urgent Bulletin",
+    "priority": "High Priority (Immediate Ingress)",
+    "sent_at": "Aujourd'hui, 08:45",
+    "audience_reach": "4 120 appareils",
+    "open_rate": "54.8%",
+    "status": "delivered"
+  },
+  {
+    "id": "notif-4",
+    "title": "Directives : Règles d'origine préférentielles ZLECAF & SADC",
+    "subtitle": "Exigences documentaires mises à jour pour certificats d'origine...",
+    "body": "Rappel aux commissionnaires en douane agréés : présentation obligatoire des certificats d'origine dématérialisés pour bénéficier des réductions tarifaires d'accord commercial.",
+    "target_audience": "Customs Brokers",
+    "category": "Regulatory Update",
+    "priority": "Normal Priority",
+    "sent_at": "Hier, 16:20",
+    "audience_reach": "8 920 appareils",
+    "open_rate": "84.2%",
+    "status": "delivered"
+  },
+  {
+    "id": "notif-5",
+    "title": "Directives : Référentiel de la valeur en douane pour matériels industriels",
+    "subtitle": "Publication du barème indicatif du dernier trimestre...",
+    "body": "La Direction Générale publie la mise à jour des valeurs administratives de référence pour l'importation d'engins lourds de chantier et équipements informatiques.",
+    "target_audience": "All Users",
+    "category": "Regulatory Update",
+    "priority": "Normal Priority",
+    "sent_at": "Il y a 3 jours",
+    "audience_reach": "24 850 appareils",
+    "open_rate": "68.9%",
+    "status": "delivered"
+  },
+  {
+    "id": "notif-6",
+    "title": "Avis : Voie verte expresse pour l'exportation de denrées périssables",
+    "subtitle": "Facilitation spéciale au terminal de Kinshasa Ndjili...",
+    "body": "Un couloir d'inspection prioritaire sans escale administrative préalable est mis en service pour les cargaisons agricoles et produits agro-alimentaires frais.",
+    "target_audience": "Exporters",
+    "category": "Operational Alert",
+    "priority": "Normal Priority",
+    "sent_at": "La semaine dernière",
+    "audience_reach": "12 400 appareils",
+    "open_rate": "72.1%",
+    "status": "delivered"
+  }
+]
