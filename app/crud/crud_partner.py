@@ -32,6 +32,9 @@ class CRUDPartner:
             stmt = stmt.where(Partner.is_partner == is_partner)
         if is_principal_sponsor is not None:
             stmt = stmt.where(Partner.is_principal_sponsor == is_principal_sponsor)
+        elif is_partner is True:
+            # By default exclude principal sponsor from standard partners/sponsors carousel
+            stmt = stmt.where(Partner.is_principal_sponsor == False)
         if status:
             stmt = stmt.where(Partner.status.ilike(status))
         if search:

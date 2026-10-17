@@ -5,7 +5,7 @@
     "category": "Sponsors",
     "tier": "Principal Sponsor",
     "is_principal_sponsor": true,
-    "is_partner": true,
+    "is_partner": false,
     "status": "Active",
     "logo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792219203/dgda/partners/ugp_mod_logo.png",
     "asset_path": "assets/images/ugp_mod_logo.png",
