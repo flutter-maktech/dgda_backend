@@ -2,7 +2,12 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_active_admin, get_db
+from app.api.deps import (
+    get_current_active_admin,
+    get_current_user,
+    get_current_user_optional,
+    get_db,
+)
 from app.crud.crud_notification import crud_notification
 from app.models.user import User
 from app.schemas.notification import (
@@ -22,10 +27,11 @@ async def get_notifications(
     status_filter: Optional[str] = Query(None, alias="status", description="Status filter (delivered, broadcasting, scheduled)"),
     search: Optional[str] = Query(None, description="Search term in title, subtitle, body"),
     db: AsyncSession = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     """
     Récupère la liste des notifications et alertes officielles de la DGDA.
-    Accessible publiquement pour l'application mobile et le portail administrateur.
+    Si l'utilisateur est authentifié, retourne l'état de lecture personnalisé (is_read / is_unread).
     """
     notifications = await crud_notification.get_all_notifications(
         db=db,
@@ -34,7 +40,63 @@ async def get_notifications(
         status=status_filter,
         search=search,
     )
-    return notifications
+
+    read_ids = set()
+    if current_user:
+        read_ids = await crud_notification.get_user_read_notification_ids(
+            db=db, user_id=current_user.id
+        )
+
+    res = []
+    for notif in notifications:
+        is_read = notif.id in read_ids
+        data = NotificationResponse.model_validate(notif)
+        data.is_read = is_read
+        data.is_unread = not is_read
+        res.append(data)
+    return res
+
+
+@router.post("/read-all")
+async def mark_all_notifications_read(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Marque toutes les notifications comme lues pour l'utilisateur connecté.
+    """
+    count = await crud_notification.mark_all_as_read(db, user_id=current_user.id)
+    return {
+        "success": True,
+        "marked_count": count,
+        "message": f"{count} notifications ont été marquées comme lues",
+    }
+
+
+@router.post("/{id}/read")
+async def mark_notification_read(
+    id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Marque une notification spécifique comme lue pour l'utilisateur connecté.
+    """
+    notif = await crud_notification.get_notification_by_id(db, notif_id=id)
+    if not notif:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Notification introuvable",
+        )
+    await crud_notification.mark_as_read(
+        db=db, user_id=current_user.id, notification_id=id
+    )
+    return {
+        "success": True,
+        "notification_id": id,
+        "is_read": True,
+        "message": "Notification marquée comme lue avec succès",
+    }
 
 
 @router.get("/{id}", response_model=NotificationResponse)

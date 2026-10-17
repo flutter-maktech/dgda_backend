@@ -45,6 +45,8 @@ class NotificationResponse(BaseModel):
     audience_reach: str
     open_rate: str
     status: str
+    is_read: bool = False
+    is_unread: bool = True
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
