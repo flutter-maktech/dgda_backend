@@ -1,0 +1,62 @@
+[
+  {
+    "badge_text": "PRÉSIDENCE",
+    "role_title": "Président de la République",
+    "honorific": "Son Excellence",
+    "name": "Félix Antoine Tshisekedi Tshilombo",
+    "photo_path": "assets/images/president_felix_tshisekedi.png",
+    "photo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208798/dgda/officials/president_felix_tshisekedi.png",
+    "biography": "Félix Antoine Tshisekedi Tshilombo est le Président de la République Démocratique du Congo depuis janvier 2019, réélu en décembre 2023. En tant que Chef de l'État, il veille au respect de la Constitution, assure le fonctionnement régulier des pouvoirs publics et la continuité de l'État.",
+    "responsibilities": [
+      "Chef de l'État et Commandant suprême des Forces Armées (FARDC)",
+      "Garant de l'indépendance nationale et de l'intégrité territoriale",
+      "Orientation stratégique du développement socio-économique et douanier de la RDC",
+      "Promulgation des lois et représentation de la nation auprès des instances internationales"
+    ],
+    "mandate_period": "2024 - Présent (Second Mandat)",
+    "cabinet_office": "Palais de la Nation, Kinshasa / Gombe",
+    "official_website": "https://presidence.cd",
+    "display_order": 1,
+    "id": "president_felix_tshisekedi"
+  },
+  {
+    "badge_text": "GOUVERNEMENT",
+    "role_title": "Première Ministre",
+    "honorific": "Son Excellence",
+    "name": "Judith Suminwa Tuluka",
+    "photo_path": "assets/images/pm_judith_suminwa.png",
+    "photo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208830/dgda/officials/pm_judith_suminwa.png",
+    "biography": "Judith Suminwa Tuluka est Première Ministre et Chef du Gouvernement de la République Démocratique du Congo, première femme à occuper cette haute fonction dans l'histoire du pays. Économiste chevronnée, elle conduit la politique de la Nation impulsée par le Président de la République.",
+    "responsibilities": [
+      "Direction et coordination de l'action gouvernementale",
+      "Exécution des lois et mise en œuvre du programme de développement national",
+      "Supervision des réformes administratives, des recettes publiques et des régies financières",
+      "Engagement pour la création d'emplois et le pouvoir d'achat des ménages"
+    ],
+    "mandate_period": "2024 - Présent",
+    "cabinet_office": "Hôtel du Gouvernement, Boulevard du 30 Juin, Kinshasa",
+    "official_website": "https://primature.cd",
+    "display_order": 2,
+    "id": "pm_judith_suminwa"
+  },
+  {
+    "badge_text": "GOUVERNEMENT",
+    "role_title": "Ministre des Finances",
+    "honorific": "Son Excellence",
+    "name": "Doudou Fwamba Likunde Li-Botayi",
+    "photo_path": "assets/images/minister_doudou_fwamba.png",
+    "photo_url": "https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208829/dgda/officials/minister_doudou_fwamba.png",
+    "biography": "Doudou Fwamba Likunde Li-Botayi est Ministre des Finances de la République Démocratique du Congo. Cadre supérieur des finances publiques et expert en gestion budgétaire, il exerce la tutelle directe sur les régies financières de la République dont la DGDA.",
+    "responsibilities": [
+      "Tutelle administrative et financière de la DGDA et des régies de recettes",
+      "Pilotage de la politique budgétaire, fiscale et douanière de l'État",
+      "Modernisation et numérisation des procédures de collecte des taxes et accises",
+      "Relations avec les institutions financières internationales (FMI, Banque Mondiale)"
+    ],
+    "mandate_period": "2024 - Présent",
+    "cabinet_office": "Ministère des Finances, Boulevard du 30 Juin, Kinshasa",
+    "official_website": "https://finances.gouv.cd",
+    "display_order": 3,
+    "id": "minister_doudou_fwamba"
+  }
+]
