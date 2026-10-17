@@ -1,3 +1,4 @@
+import asyncio
 from typing import List, Optional
 from sqlalchemy import select, text, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +10,8 @@ from app.schemas.official import (
     ManagementMemberCreate,
     ManagementMemberUpdate,
 )
+
+_official_seed_lock = asyncio.Lock()
 
 
 class CRUDOfficial:
@@ -133,118 +136,157 @@ class CRUDOfficial:
     # 3. AUTO-SEEDING ROUTINES
     # ==========================================
     async def seed_government_officials_if_empty(self, db: AsyncSession) -> None:
-        stmt = select(GovernmentOfficial).limit(1)
-        res = await db.execute(stmt)
-        if res.scalars().first() is not None:
+        async with _official_seed_lock:
+            try:
+                stmt = select(GovernmentOfficial).limit(1)
+                res = await db.execute(stmt)
+                if res.scalars().first() is not None:
+                    try:
+                        await db.execute(
+                            text(
+                                "UPDATE government_officials SET "
+                                "photo_url = 'https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208798/dgda/officials/' || id || '.png' "
+                                "WHERE photo_url IS NULL OR photo_url = '' OR photo_url LIKE '/public/%'"
+                            )
+                        )
+                        await db.commit()
+                    except Exception:
+                        await db.rollback()
+                    return
+
+                initial_officials = [
+                    GovernmentOfficial(
+                        id="president_felix_tshisekedi",
+                        badge_text="PRÉSIDENCE",
+                        role_title="Président de la République",
+                        honorific="Son Excellence",
+                        name="Félix Antoine Tshisekedi Tshilombo",
+                        photo_path="",
+                        photo_url="https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208798/dgda/officials/president_felix_tshisekedi.png",
+                        mandate_period="2024 - Présent (Second Mandat)",
+                        cabinet_office="Palais de la Nation, Kinshasa / Gombe",
+                        official_website="https://presidence.cd",
+                        display_order=1,
+                        biography=(
+                            "Félix Antoine Tshisekedi Tshilombo est le Président de la République Démocratique du Congo "
+                            "depuis janvier 2019, réélu en décembre 2023. En tant que Chef de l'État, il veille au respect de "
+                            "la Constitution, assure le fonctionnement régulier des pouvoirs publics et la continuité de l'État."
+                        ),
+                        responsibilities=[
+                            "Chef de l'État et Commandant suprême des Forces Armées (FARDC)",
+                            "Garant de l'indépendance nationale et de l'intégrité territoriale",
+                            "Orientation stratégique du développement socio-économique et douanier de la RDC",
+                            "Promulgation des lois et représentation de la nation auprès des instances internationales",
+                        ],
+                    ),
+                    GovernmentOfficial(
+                        id="pm_judith_suminwa",
+                        badge_text="GOUVERNEMENT",
+                        role_title="Première Ministre",
+                        honorific="Son Excellence",
+                        name="Judith Suminwa Tuluka",
+                        photo_path="",
+                        photo_url="https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208830/dgda/officials/pm_judith_suminwa.png",
+                        mandate_period="2024 - Présent",
+                        cabinet_office="Hôtel du Gouvernement, Boulevard du 30 Juin, Kinshasa",
+                        official_website="https://primature.cd",
+                        display_order=2,
+                        biography=(
+                            "Judith Suminwa Tuluka est Première Ministre et Chef du Gouvernement de la République Démocratique du Congo, "
+                            "première femme à occuper cette haute fonction dans l'histoire du pays. Économiste chevronnée, elle conduit "
+                            "la politique de la Nation impulsée par le Président de la République."
+                        ),
+                        responsibilities=[
+                            "Direction et coordination de l'action gouvernementale",
+                            "Exécution des lois et mise en œuvre du programme de développement national",
+                            "Supervision des réformes administratives, des recettes publiques et des régies financières",
+                            "Engagement pour la création d'emplois et le pouvoir d'achat des ménages",
+                        ],
+                    ),
+                    GovernmentOfficial(
+                        id="minister_doudou_fwamba",
+                        badge_text="GOUVERNEMENT",
+                        role_title="Ministre des Finances",
+                        honorific="Son Excellence",
+                        name="Doudou Fwamba Likunde Li-Botayi",
+                        photo_path="",
+                        photo_url="https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208829/dgda/officials/minister_doudou_fwamba.png",
+                        mandate_period="2024 - Présent",
+                        cabinet_office="Ministère des Finances, Boulevard du 30 Juin, Kinshasa",
+                        official_website="https://finances.gouv.cd",
+                        display_order=3,
+                        biography=(
+                            "Doudou Fwamba Likunde Li-Botayi est Ministre des Finances de la République Démocratique du Congo. "
+                            "Cadre supérieur des finances publiques et expert en gestion budgétaire, il exerce la tutelle directe "
+                            "sur les régies financières de la République dont la DGDA."
+                        ),
+                        responsibilities=[
+                            "Tutelle administrative et financière de la DGDA et des régies de recettes",
+                            "Pilotage de la politique budgétaire, fiscale et douanière de l'État",
+                            "Modernisation et numérisation des procédures de collecte des taxes et accises",
+                            "Relations avec les institutions financières internationales (FMI, Banque Mondiale)",
+                        ],
+                    ),
+                ]
+
+                for off in initial_officials:
+                    db.add(off)
+                await db.commit()
+            except Exception as e:
+                await db.rollback()
+                print(f"Error seeding government officials: {e}")
+
+    async def seed_management_members_if_empty(self, db: AsyncSession) -> None:
+        async with _official_seed_lock:
+            # 1. Update existing DB records to fix any broken French string escapes
             try:
                 await db.execute(
                     text(
-                        "UPDATE government_officials SET "
-                        "photo_url = 'https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208798/dgda/officials/' || id || '.png' "
-                        "WHERE photo_url IS NULL OR photo_url = '' OR photo_url LIKE '/public/%'"
+                        "UPDATE management_members SET department = 'Direction de l''Audit Interne' "
+                        "WHERE id IN ('dc-02', 'dc-05', 'dc-07', 'dc-08', 'dc-10', 'dc-16')"
+                    )
+                )
+                await db.execute(
+                    text(
+                        "UPDATE management_members SET location = 'Bunia, Province de l''Ituri' "
+                        "WHERE id = 'dp-06'"
+                    )
+                )
+                await db.execute(
+                    text(
+                        "UPDATE management_members SET location = 'Aéroport International de N''djili, Kinshasa' "
+                        "WHERE id = 'dp-10'"
+                    )
+                )
+                await db.execute(
+                    text(
+                        "UPDATE management_members SET location = 'Mbandaka, Province de l''Equateur' "
+                        "WHERE id = 'dp-12'"
                     )
                 )
                 await db.commit()
             except Exception:
                 await db.rollback()
-            return
 
+            try:
+                count_stmt = select(func.count()).select_from(ManagementMember)
+                res = await db.execute(count_stmt)
+                total_count = res.scalar() or 0
 
-        initial_officials = [
-            GovernmentOfficial(
-                id="president_felix_tshisekedi",
-                badge_text="PRÉSIDENCE",
-                role_title="Président de la République",
-                honorific="Son Excellence",
-                name="Félix Antoine Tshisekedi Tshilombo",
-                photo_path="",
-                photo_url="https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208798/dgda/officials/president_felix_tshisekedi.png",
-                mandate_period="2024 - Présent (Second Mandat)",
-                cabinet_office="Palais de la Nation, Kinshasa / Gombe",
-                official_website="https://presidence.cd",
-                display_order=1,
-                biography=(
-                    "Félix Antoine Tshisekedi Tshilombo est le Président de la République Démocratique du Congo "
-                    "depuis janvier 2019, réélu en décembre 2023. En tant que Chef de l'État, il veille au respect de "
-                    "la Constitution, assure le fonctionnement régulier des pouvoirs publics et la continuité de l'État."
-                ),
-                responsibilities=[
-                    "Chef de l'État et Commandant suprême des Forces Armées (FARDC)",
-                    "Garant de l'indépendance nationale et de l'intégrité territoriale",
-                    "Orientation stratégique du développement socio-économique et douanier de la RDC",
-                    "Promulgation des lois et représentation de la nation auprès des instances internationales",
-                ],
-            ),
-            GovernmentOfficial(
-                id="pm_judith_suminwa",
-                badge_text="GOUVERNEMENT",
-                role_title="Première Ministre",
-                honorific="Son Excellence",
-                name="Judith Suminwa Tuluka",
-                photo_path="",
-                photo_url="https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208830/dgda/officials/pm_judith_suminwa.png",
-                mandate_period="2024 - Présent",
-                cabinet_office="Hôtel du Gouvernement, Boulevard du 30 Juin, Kinshasa",
-                official_website="https://primature.cd",
-                display_order=2,
-                biography=(
-                    "Judith Suminwa Tuluka est Première Ministre et Chef du Gouvernement de la République Démocratique du Congo, "
-                    "première femme à occuper cette haute fonction dans l'histoire du pays. Économiste chevronnée, elle conduit "
-                    "la politique de la Nation impulsée par le Président de la République."
-                ),
-                responsibilities=[
-                    "Direction et coordination de l'action gouvernementale",
-                    "Exécution des lois et mise en œuvre du programme de développement national",
-                    "Supervision des réformes administratives, des recettes publiques et des régies financières",
-                    "Engagement pour la création d'emplois et le pouvoir d'achat des ménages",
-                ],
-            ),
-            GovernmentOfficial(
-                id="minister_doudou_fwamba",
-                badge_text="GOUVERNEMENT",
-                role_title="Ministre des Finances",
-                honorific="Son Excellence",
-                name="Doudou Fwamba Likunde Li-Botayi",
-                photo_path="",
-                photo_url="https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208829/dgda/officials/minister_doudou_fwamba.png",
-                mandate_period="2024 - Présent",
-                cabinet_office="Ministère des Finances, Boulevard du 30 Juin, Kinshasa",
-                official_website="https://finances.gouv.cd",
-                display_order=3,
-                biography=(
-                    "Doudou Fwamba Likunde Li-Botayi est Ministre des Finances de la République Démocratique du Congo. "
-                    "Cadre supérieur des finances publiques et expert en gestion budgétaire, il exerce la tutelle directe "
-                    "sur les régies financières de la République dont la DGDA."
-                ),
-                responsibilities=[
-                    "Tutelle administrative et financière de la DGDA et des régies de recettes",
-                    "Pilotage de la politique budgétaire, fiscale et douanière de l'État",
-                    "Modernisation et numérisation des procédures de collecte des taxes et accises",
-                    "Relations avec les institutions financières internationales (FMI, Banque Mondiale)",
-                ],
-            ),
-        ]
+                has_cloudinary_stmt = select(ManagementMember).where(ManagementMember.photo_url.like("https://res.cloudinary.com/%")).limit(1)
+                res_cloud = await db.execute(has_cloudinary_stmt)
+                has_cloudinary = res_cloud.scalars().first() is not None
 
-        for off in initial_officials:
-            db.add(off)
-        await db.commit()
+                if total_count >= 50 and has_cloudinary:
+                    return
 
-    async def seed_management_members_if_empty(self, db: AsyncSession) -> None:
-        count_stmt = select(func.count()).select_from(ManagementMember)
-        res = await db.execute(count_stmt)
-        total_count = res.scalar() or 0
-
-        has_cloudinary_stmt = select(ManagementMember).where(ManagementMember.photo_url.like("https://res.cloudinary.com/%")).limit(1)
-        res_cloud = await db.execute(has_cloudinary_stmt)
-        has_cloudinary = res_cloud.scalars().first() is not None
-
-        if total_count >= 50 and has_cloudinary:
-            return
-
-        if total_count > 0:
-            await db.execute(text("DELETE FROM management_members"))
-            await db.commit()
-
+                if total_count > 0:
+                    await db.execute(text("DELETE FROM management_members"))
+                    await db.commit()
+            except Exception as e:
+                await db.rollback()
+                print(f"Error checking management count: {e}")
+                return
 
         initial_members = [
             ManagementMember(
@@ -318,7 +360,7 @@ class CRUDOfficial:
                 id='dc-02',
                 full_name='BANGWELA BOGENDA',
                 role_or_title='Audit Interne',
-                department='Direction de l\\',
+                department="Direction de l\'Audit Interne",
                 location='Kinshasa (Siège Central)',
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208838/dgda/management/central_02_bangwela_bogenda.jpg',
                 source_reference='central-02 | Agenda Officiel DGDA, p. 15',
@@ -363,7 +405,7 @@ class CRUDOfficial:
                 id='dc-05',
                 full_name='Guy ESSONGOLA TOLE ESSO',
                 role_or_title='Audit Interne',
-                department='Direction de l\\',
+                department="Direction de l\'Audit Interne",
                 location='Kinshasa (Siège Central)',
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208840/dgda/management/central_05_guy_essongola.jpg',
                 source_reference='central-05 | Agenda Officiel DGDA, p. 15',
@@ -393,7 +435,7 @@ class CRUDOfficial:
                 id='dc-07',
                 full_name='Symphorien KASINDI YIMBA',
                 role_or_title='Audit Interne',
-                department='Direction de l\\',
+                department="Direction de l\'Audit Interne",
                 location='Kinshasa (Siège Central)',
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208841/dgda/management/central_07_symphorien_kasindi.jpg',
                 source_reference='central-07 | Agenda Officiel DGDA, p. 15',
@@ -408,7 +450,7 @@ class CRUDOfficial:
                 id='dc-08',
                 full_name='Robert KILEMUNA KUNDA',
                 role_or_title='Audit Interne',
-                department='Direction de l\\',
+                department="Direction de l\'Audit Interne",
                 location='Kinshasa (Siège Central)',
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208842/dgda/management/central_08_robert_kilemuna.jpg',
                 source_reference='central-08 | Agenda Officiel DGDA, p. 15',
@@ -438,7 +480,7 @@ class CRUDOfficial:
                 id='dc-10',
                 full_name='Richard LEHANI RASHIDI',
                 role_or_title='Audit Interne',
-                department='Direction de l\\',
+                department="Direction de l\'Audit Interne",
                 location='Kinshasa (Siège Central)',
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208843/dgda/management/central_10_richard_lehani.jpg',
                 source_reference='central-10 | Agenda Officiel DGDA, p. 15',
@@ -528,7 +570,7 @@ class CRUDOfficial:
                 id='dc-16',
                 full_name='Béatrice MBUYAMBA CIYOLE',
                 role_or_title='Audit Interne',
-                department='Direction de l\\',
+                department="Direction de l\'Audit Interne",
                 location='Kinshasa (Siège Central)',
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208848/dgda/management/central_16_beatrice_mbuyamba.jpg',
                 source_reference='central-16 | Agenda Officiel DGDA, p. 15',
@@ -859,7 +901,7 @@ class CRUDOfficial:
                 full_name='Felly KITENGE YAMWILA',
                 role_or_title='Directeur Provincial — Ituri',
                 department='Direction Provinciale des Douanes',
-                location='Bunia, Province de l\\',
+                location="Bunia, Province de l\'Ituri",
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208870/dgda/management/provincial_06_felly_kitenge.jpg',
                 source_reference='provincial-06 | Agenda Officiel DGDA, p. 16',
                 official_email='contact@douane.gouv.cd',
@@ -919,7 +961,7 @@ class CRUDOfficial:
                 full_name='Ildephonse MUBIBYA SILUTALA',
                 role_or_title='Directeur Provincial — Kinshasa-Aéro',
                 department='Direction Provinciale Aéronautique',
-                location='Aéroport International de N\\',
+                location="Aéroport International de N\'djili, Kinshasa",
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208873/dgda/management/provincial_10_ildephonse_mubibya.jpg',
                 source_reference='provincial-10 | Agenda Officiel DGDA, p. 16',
                 official_email='contact@douane.gouv.cd',
@@ -949,7 +991,7 @@ class CRUDOfficial:
                 full_name='Sabine MUSSIMBI BIBI',
                 role_or_title='Directeur Provincial — Equateur',
                 department='Direction Provinciale des Douanes',
-                location='Mbandaka, Province de l\\',
+                location="Mbandaka, Province de l\'Equateur",
                 photo_url='https://res.cloudinary.com/lgxpxrfm/image/upload/v1792208874/dgda/management/provincial_12_sabine_mussimbi.jpg',
                 source_reference='provincial-12 | Agenda Officiel DGDA, p. 17',
                 official_email='contact@douane.gouv.cd',
@@ -1125,10 +1167,13 @@ class CRUDOfficial:
                 display_order=59,
             ),
         ]
-
-        for mem in initial_members:
-            db.add(mem)
-        await db.commit()
+        try:
+            for mem in initial_members:
+                db.add(mem)
+            await db.commit()
+        except Exception as e:
+            await db.rollback()
+            print(f"Error seeding management members: {e}")
 
 
 crud_official = CRUDOfficial()

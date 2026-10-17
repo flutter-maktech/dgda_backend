@@ -50,6 +50,16 @@ async def lifespan(app: FastAPI):
     # Startup: Initialize Database Tables and default Admin
     await init_db()
     await seed_initial_admin()
+
+    # Seed officials and management members during application startup
+    try:
+        from app.crud.crud_official import crud_official
+        async with AsyncSessionLocal() as session:
+            await crud_official.seed_government_officials_if_empty(session)
+            await crud_official.seed_management_members_if_empty(session)
+    except Exception as e:
+        print(f"Error during officials startup seed: {e}")
+
     yield
     # Shutdown routine (if needed)
 
