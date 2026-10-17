@@ -65,5 +65,14 @@ class Settings(BaseSettings):
     OPENAI_BASE_URL: str = "https://api.openai.com/v1"
     GEMINI_API_KEY: str = ""
 
+    # Cloudinary CDN Configuration
+    CLOUDINARY_CLOUD_NAME: Optional[str] = "lgxpxrfm"
+    CLOUDINARY_API_KEY: Optional[str] = "545539238719243"
+    CLOUDINARY_API_SECRET: Optional[str] = "muj4VPJxHADkCcsJ22kscKK1cHM"
+    CLOUDINARY_URL: Optional[str] = (
+        "cloudinary://545539238719243:muj4VPJxHADkCcsJ22kscKK1cHM@lgxpxrfm"
+    )
+
+
 
 settings = Settings()
