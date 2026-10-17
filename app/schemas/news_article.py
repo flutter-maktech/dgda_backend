@@ -8,6 +8,7 @@ class NewsArticleBase(BaseModel):
     date: str
     category: str
     image_url: Optional[str] = None
+    pdf_url: Optional[str] = None
     is_featured: Optional[bool] = False
 
 class NewsArticleCreate(NewsArticleBase):

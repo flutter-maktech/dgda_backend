@@ -83,3 +83,9 @@ async def init_db() -> None:
             except Exception:
                 pass
 
+        # Ensure pdf_url column exists for news_articles
+        try:
+            await conn.execute(text("ALTER TABLE news_articles ADD COLUMN pdf_url VARCHAR(500)"))
+        except Exception:
+            pass
+

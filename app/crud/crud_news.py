@@ -11,6 +11,7 @@ INITIAL_NEWS = [
         "date": "28/08/2024",
         "category": "RÉFORMES",
         "image_url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400",
+        "pdf_url": "https://dgda-backend.maktechapp.cloud/public/docs/manuel_sydonia_world.pdf",
         "is_featured": True,
     },
     {
@@ -20,6 +21,7 @@ INITIAL_NEWS = [
         "date": "15/08/2024",
         "category": "RÉGLEMENTATION",
         "image_url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400",
+        "pdf_url": "https://dgda-backend.maktechapp.cloud/public/docs/tarif_douanier_sh_2024.pdf",
         "is_featured": True,
     },
     {
@@ -29,6 +31,7 @@ INITIAL_NEWS = [
         "date": "02/08/2024",
         "category": "CORRIDORS",
         "image_url": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400",
+        "pdf_url": "https://dgda-backend.maktechapp.cloud/public/docs/guide_dedouanement_2024.pdf",
         "is_featured": False,
     },
     {
@@ -38,6 +41,7 @@ INITIAL_NEWS = [
         "date": "22/07/2024",
         "category": "COMMUNIQUÉ",
         "image_url": "https://images.unsplash.com/photo-1450133064473-71024230f91b?w=400",
+        "pdf_url": "https://dgda-backend.maktechapp.cloud/public/docs/formulaire_dud_dau.pdf",
         "is_featured": False,
     },
     {
@@ -47,6 +51,7 @@ INITIAL_NEWS = [
         "date": "10/07/2024",
         "category": "FINANCES",
         "image_url": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400",
+        "pdf_url": "https://dgda-backend.maktechapp.cloud/public/docs/regime_transit_t1_sadc.pdf",
         "is_featured": False,
     },
     {
@@ -56,6 +61,7 @@ INITIAL_NEWS = [
         "date": "25/06/2024",
         "category": "OPÉRATIONS",
         "image_url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400",
+        "pdf_url": "https://dgda-backend.maktechapp.cloud/public/docs/code_des_douanes_rdc.pdf",
         "is_featured": False,
     },
 ]
@@ -95,6 +101,22 @@ class CRUDNews:
 
             result = await db.execute(select(NewsArticle).order_by(NewsArticle.created_at.desc()))
             items = list(result.scalars().all())
+        else:
+            # Backfill pdf_url for existing items if missing
+            updated = False
+            for item in items:
+                if not getattr(item, "pdf_url", None):
+                    for init_item in INITIAL_NEWS:
+                        if init_item["title"] == item.title:
+                            item.pdf_url = init_item["pdf_url"]
+                            db.add(item)
+                            updated = True
+                            break
+            if updated:
+                try:
+                    await db.commit()
+                except Exception:
+                    await db.rollback()
 
         return items
 
