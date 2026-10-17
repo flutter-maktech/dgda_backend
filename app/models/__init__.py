@@ -14,6 +14,7 @@ from app.models.incorrect_data_report import IncorrectDataReport
 from app.models.content_document import ContentDocument
 from app.models.technical_support import TechnicalSupportInfo, SupportTicket
 from app.models.notification import Notification
+from app.models.user_notification_read import UserNotificationRead
 
 __all__ = [
     "User",
@@ -39,5 +40,6 @@ __all__ = [
     "TechnicalSupportInfo",
     "SupportTicket",
     "Notification",
+    "UserNotificationRead",
 ]
 
