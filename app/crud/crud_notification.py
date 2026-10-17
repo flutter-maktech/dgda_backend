@@ -7,6 +7,7 @@ from sqlalchemy import select, func, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.notification import Notification
+from app.models.user_notification_read import UserNotificationRead
 from app.schemas.notification import NotificationCreate, NotificationUpdate
 
 _notif_seed_lock = asyncio.Lock()
@@ -83,6 +84,52 @@ class CRUDNotification:
         await db.delete(db_obj)
         await db.commit()
         return True
+
+    async def get_user_read_notification_ids(
+        self, db: AsyncSession, user_id: int
+    ) -> set[str]:
+        stmt = select(UserNotificationRead.notification_id).where(
+            UserNotificationRead.user_id == user_id
+        )
+        res = await db.execute(stmt)
+        return set(res.scalars().all())
+
+    async def mark_as_read(
+        self, db: AsyncSession, user_id: int, notification_id: str
+    ) -> bool:
+        stmt = select(UserNotificationRead).where(
+            UserNotificationRead.user_id == user_id,
+            UserNotificationRead.notification_id == notification_id,
+        )
+        res = await db.execute(stmt)
+        existing = res.scalars().first()
+        if existing:
+            return True
+
+        read_record = UserNotificationRead(
+            user_id=user_id,
+            notification_id=notification_id,
+        )
+        db.add(read_record)
+        await db.commit()
+        return True
+
+    async def mark_all_as_read(
+        self, db: AsyncSession, user_id: int
+    ) -> int:
+        notif_stmt = select(Notification.id)
+        res = await db.execute(notif_stmt)
+        all_ids = res.scalars().all()
+
+        existing_reads = await self.get_user_read_notification_ids(db, user_id)
+        count = 0
+        for nid in all_ids:
+            if nid not in existing_reads:
+                db.add(UserNotificationRead(user_id=user_id, notification_id=nid))
+                count += 1
+        if count > 0:
+            await db.commit()
+        return count
 
     async def seed_notifications_if_empty(self, db: AsyncSession) -> None:
         async with _notif_seed_lock:
