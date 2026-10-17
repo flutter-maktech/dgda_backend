@@ -11,6 +11,8 @@ from app.api.v1.endpoints import (
     officials,
     uploads,
     partners,
+    faqs,
+    reports,
 )
 
 
@@ -48,5 +50,12 @@ api_router.include_router(partners.router, prefix="/partners", tags=["Partners &
 
 # Cloudinary Media Upload Routes (Admin / Media Service)
 api_router.include_router(uploads.router, prefix="/uploads", tags=["Media Uploads"])
+
+# Frequently Asked Questions (FAQ) Routes (supports both /faqs and /faq)
+api_router.include_router(faqs.router, prefix="/faqs", tags=["FAQ"])
+api_router.include_router(faqs.router, prefix="/faq", tags=["FAQ"], include_in_schema=False)
+
+# Discrepancy & Incorrect Data Reports Routes
+api_router.include_router(reports.router, prefix="/reports", tags=["Data Reports"])
 
 

@@ -9,6 +9,8 @@ from app.models.news_article import NewsArticle
 from app.models.user_bookmark import UserBookmark, BookmarkType
 from app.models.official import GovernmentOfficial, ManagementMember
 from app.models.partner import Partner
+from app.models.faq import FAQ
+from app.models.incorrect_data_report import IncorrectDataReport
 
 __all__ = [
     "User",
@@ -28,5 +30,7 @@ __all__ = [
     "GovernmentOfficial",
     "ManagementMember",
     "Partner",
+    "FAQ",
+    "IncorrectDataReport",
 ]
 

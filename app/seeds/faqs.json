@@ -1,0 +1,66 @@
+[
+  {
+    "id": "faq-1",
+    "no": 1,
+    "question": "Comment suivre le statut de ma déclaration en douane dans l'application ?",
+    "answer": "Vous pouvez suivre le dédouanement de vos marchandises en temps réel en saisissant votre numéro de déclaration SYDONIA++ ou la référence du bordereau dans l'onglet 'Déclarations'. Vous recevrez des notifications instantanées pour chaque étape (Enregistrement, Liquidation, Bon à enlever).",
+    "status": "ACTIVE",
+    "category": "Déclarations"
+  },
+  {
+    "id": "faq-2",
+    "no": 2,
+    "question": "Qu'est-ce que le système SydoniaWorld et comment est-il interconnecté avec l'application ?",
+    "answer": "SYDONIA (Système Douanier Automatisé) est la plateforme centrale de dédouanement de la DGDA. L'application mobile se connecte de manière sécurisée aux bases de données Sydonia pour fournir les quittances numériques, attestations de paiement et statuts de mainlevée sans déplacement physique.",
+    "status": "ACTIVE",
+    "category": "SYDONIA"
+  },
+  {
+    "id": "faq-3",
+    "no": 3,
+    "question": "Quels sont les horaires d'ouverture des postes frontaliers principaux (Kasumbalesa, Matadi, Kinshasa) ?",
+    "answer": "Le poste frontalier à guichet unique de Kasumbalesa fonctionne en service ininterrompu 24h/24 et 7j/7 pour le transit transfrontalier SADC. Le port maritime de Matadi et les bureaux aéroportuaires de Kinshasa Ndjili sont opérationnels de 08h00 à 18h00 avec des permanences techniques pour les cargaisons prioritaires.",
+    "status": "ACTIVE",
+    "category": "Bureaux Douaniers"
+  },
+  {
+    "id": "faq-4",
+    "no": 4,
+    "question": "Comment sont calculés les droits de douane et taxes à l'importation en RDC ?",
+    "answer": "Les droits et taxes sont assis sur la valeur CAF (Coût, Assurance, Fret) de la marchandise conformément au Tarif des Douanes basé sur la nomenclature du Système Harmonisé (SH). Ils comprennent le droit de douane (DD), la TVA à l'importation de 16%, et les redevances connexes applicables.",
+    "status": "ACTIVE",
+    "category": "Tarifs & Taxes"
+  },
+  {
+    "id": "faq-5",
+    "no": 5,
+    "question": "Quelles sont les franchises douanières accordées aux voyageurs à l'entrée sur le territoire ?",
+    "answer": "Tout voyageur a droit à une franchise totale des droits et taxes pour ses bagages personnels usagés. Pour les marchandises neuves ou souvenirs sans caractère commercial, une tolérance forfaitaire s'applique selon les barèmes fixés par la législation douanière en vigueur.",
+    "status": "ACTIVE",
+    "category": "Voyageurs"
+  },
+  {
+    "id": "faq-6",
+    "no": 6,
+    "question": "Que faire en cas de désaccord sur la valeur déclarée ou le classement tarifaire ?",
+    "answer": "L'importateur ou son commissionnaire en douane agréé peut introduire une demande de réexamen motivée auprès du Receveur principal du bureau concerné, ou soumettre un recours administratif auprès du Directeur Général de la DGDA dans les délais prescrits par le Code des Douanes.",
+    "status": "ACTIVE",
+    "category": "Contentieux"
+  },
+  {
+    "id": "faq-7",
+    "no": 7,
+    "question": "Quels modes de paiement sont acceptés pour régler les quittances douanières ?",
+    "answer": "Les déclarants peuvent régler leurs droits de douane par télé-compensation bancaire sécurisée auprès des banques partenaires agréées, par virement bancaire SWIFT / RTGS, ou via les plateformes de paiement électronique intégrées au Guichet Unique du Commerce Extérieur.",
+    "status": "ACTIVE",
+    "category": "Paiement"
+  },
+  {
+    "id": "faq-8",
+    "no": 8,
+    "question": "Comment signaler une anomalie ou des données incorrectes dans l'application ?",
+    "answer": "Rendez-vous dans la rubrique 'Profil', sélectionnez 'Signaler des données incorrectes' puis appuyez sur l'icône '+' en haut à droite. Décrivez précisément l'erreur constatée (horaires de bureau, tarif SH, contact). Notre équipe d'audit douanier traite chaque signalement dans les plus brefs délais.",
+    "status": "ACTIVE",
+    "category": "Support"
+  }
+]

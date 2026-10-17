@@ -22,6 +22,9 @@ from app.crud.crud_calendar_event import (
     delete_calendar_event,
 )
 
+from app.crud.crud_faq import crud_faq
+from app.crud.crud_report import crud_report
+
 __all__ = [
     "get_user_by_id",
     "get_user_by_email",
@@ -42,4 +45,6 @@ __all__ = [
     "get_calendar_event_by_id",
     "update_calendar_event",
     "delete_calendar_event",
+    "crud_faq",
+    "crud_report",
 ]

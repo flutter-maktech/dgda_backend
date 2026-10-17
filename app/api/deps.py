@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -101,3 +101,25 @@ async def get_current_active_staff(
             detail="Staff or administrator privileges required",
         )
     return current_user
+
+
+async def get_current_user_optional(
+    db: AsyncSession = Depends(get_db),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_bearer),
+) -> Optional[User]:
+    """Retrieve authenticated user if bearer token is valid, otherwise return None."""
+    if not credentials or not credentials.credentials:
+        return None
+    try:
+        payload = decode_token(credentials.credentials)
+        if not payload or payload.get("type") != "access":
+            return None
+        user_id_str = payload.get("sub")
+        if not user_id_str:
+            return None
+        user = await get_user_by_id(db, user_id=int(user_id_str))
+        if user and user.is_active:
+            return user
+        return None
+    except Exception:
+        return None
