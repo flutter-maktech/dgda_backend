@@ -50,6 +50,18 @@ class CRUDContent:
         subtitle: Optional[str] = None,
         paragraphs: Optional[List[str]] = None,
     ) -> ContentDocument:
+        import re
+        if paragraphs is None and content:
+            p_matches = re.findall(r'<p[^>]*>(.*?)</p>', content, flags=re.DOTALL | re.IGNORECASE)
+            if p_matches:
+                clean_paragraphs = [
+                    re.sub(r'<[^>]+>', '', p).strip()
+                    for p in p_matches
+                    if re.sub(r'<[^>]+>', '', p).strip()
+                ]
+                if clean_paragraphs:
+                    paragraphs = clean_paragraphs
+
         doc = await self.get_by_type(db, doc_type)
         if not doc:
             doc = ContentDocument(

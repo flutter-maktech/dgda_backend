@@ -96,10 +96,13 @@ async def get_admin_side_content(
 
 @router.patch("/admin/side-content/{doc_type}/{doc_id}")
 @router.post("/admin/side-content/{doc_type}/{doc_id}", include_in_schema=False)
+@router.put("/admin/side-content/{doc_type}/{doc_id}", include_in_schema=False)
+@router.put("/privacy-policy", include_in_schema=False)
+@router.patch("/privacy-policy", include_in_schema=False)
 async def update_admin_side_content(
-    doc_type: str,
-    doc_id: str,
     payload: Dict[str, Any],
+    doc_type: str = "privacy-policy",
+    doc_id: str = "doc-privacy-policy",
     db: AsyncSession = Depends(get_db),
     current_admin: User = Depends(get_current_active_admin),
 ):
