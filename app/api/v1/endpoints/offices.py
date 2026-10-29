@@ -1,8 +1,12 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.deps import get_db
-from app.schemas.customs_office import CustomsOfficeResponse
+from app.api.deps import get_db, get_current_active_staff
+from app.schemas.customs_office import (
+    CustomsOfficeResponse,
+    CustomsOfficeCreate,
+    CustomsOfficeUpdate,
+)
 from app.crud import crud_office
 
 router = APIRouter()
@@ -44,3 +48,61 @@ async def get_office(
             detail="Customs office not found",
         )
     return office
+
+
+@router.post(
+    "",
+    response_model=CustomsOfficeResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create customs office directory record (Admin / Staff)",
+)
+async def create_office(
+    office_in: CustomsOfficeCreate,
+    db: AsyncSession = Depends(get_db),
+    admin=Depends(get_current_active_staff),
+):
+    return await crud_office.create_office(db, office_in=office_in)
+
+
+@router.put(
+    "/{office_id}",
+    response_model=CustomsOfficeResponse,
+    summary="Update customs office record (Admin / Staff)",
+)
+@router.patch(
+    "/{office_id}",
+    response_model=CustomsOfficeResponse,
+    summary="Patch customs office record (Admin / Staff)",
+)
+async def update_office(
+    office_id: int,
+    office_in: CustomsOfficeUpdate,
+    db: AsyncSession = Depends(get_db),
+    admin=Depends(get_current_active_staff),
+):
+    office = await crud_office.update_office(db, office_id=office_id, office_in=office_in)
+    if not office:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Customs office not found",
+        )
+    return office
+
+
+@router.delete(
+    "/{office_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Delete customs office record (Admin / Staff)",
+)
+async def delete_office(
+    office_id: int,
+    db: AsyncSession = Depends(get_db),
+    admin=Depends(get_current_active_staff),
+):
+    success = await crud_office.delete_office(db, office_id=office_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Customs office not found",
+        )
+    return {"success": True, "message": "Customs office deleted successfully", "id": office_id}

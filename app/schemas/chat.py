@@ -21,3 +21,57 @@ class ChatMessageResponse(BaseModel):
 
 class ChatHistoryResponse(BaseModel):
     messages: List[ChatMessageResponse]
+
+
+class KnowledgeEntryBase(BaseModel):
+    question: str
+    category: str
+    legal_reference: str
+    official_answer: str
+    keywords: Optional[List[str]] = None
+    confidence: Optional[int] = 95
+    status: Optional[str] = "active"
+
+
+class KnowledgeEntryCreate(KnowledgeEntryBase):
+    pass
+
+
+class KnowledgeEntryUpdate(BaseModel):
+    question: Optional[str] = None
+    category: Optional[str] = None
+    legal_reference: Optional[str] = None
+    official_answer: Optional[str] = None
+    keywords: Optional[List[str]] = None
+    confidence: Optional[int] = None
+    status: Optional[str] = None
+
+
+class KnowledgeEntryResponse(BaseModel):
+    id: str
+    question: str
+    category: str
+    legal_reference: str
+    legalReference: Optional[str] = None
+    official_answer: str
+    officialAnswer: Optional[str] = None
+    keywords: List[str] = []
+    confidence: int = 95
+    status: str = "active"
+    updated_at: str
+    updatedAt: Optional[str] = None
+
+
+class TestAgentQueryRequest(BaseModel):
+    query: str = Field(..., min_length=1)
+
+
+class TestAgentQueryResponse(BaseModel):
+    query: str
+    reply: str
+    category: str
+    legal_reference: Optional[str] = None
+    legalReference: Optional[str] = None
+    officialAnswer: Optional[str] = None
+    confidence: int
+    matched_id: Optional[str] = None

@@ -18,6 +18,17 @@ class CustomsDocumentCreate(CustomsDocumentBase):
     pass
 
 
+class CustomsDocumentUpdate(BaseModel):
+    title: Optional[str] = None
+    category: Optional[str] = None
+    format: Optional[str] = None
+    file_size: Optional[str] = None
+    date: Optional[str] = None
+    download_url: Optional[str] = None
+    image_url: Optional[str] = None
+    description: Optional[str] = None
+
+
 class CustomsDocumentResponse(CustomsDocumentBase):
     id: int
     created_at: datetime

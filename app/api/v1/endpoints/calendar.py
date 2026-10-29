@@ -8,9 +8,10 @@ from app.crud.crud_calendar_event import (
     delete_calendar_event,
     get_calendar_event_by_id,
     get_user_calendar_events,
+    get_all_calendar_events,
     update_calendar_event,
 )
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.schemas.calendar_event import (
     CalendarEventCreate,
     CalendarEventResponse,
@@ -21,9 +22,19 @@ router = APIRouter()
 
 
 @router.get(
+    "",
+    response_model=List[CalendarEventResponse],
+    summary="List all customs calendar events"
+)
+@router.get(
+    "/",
+    response_model=List[CalendarEventResponse],
+    summary="List all customs calendar events"
+)
+@router.get(
     "/events",
     response_model=List[CalendarEventResponse],
-    summary="List all customs calendar events for current user"
+    summary="List all customs calendar events"
 )
 async def list_calendar_events(
     month: Optional[str] = Query(None, description="Filter by year-month (e.g. 2026-10)"),
@@ -34,16 +45,23 @@ async def list_calendar_events(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Retrieve customs calendar events belonging to the authenticated user.
+    Retrieve customs calendar events:
+    - Administrators & Staff: Retrieve all global customs schedule events.
+    - Regular Users: Retrieve user-specific scheduled operations.
     """
-    events = await get_user_calendar_events(
-        db,
-        user_id=current_user.id,
-        month=month,
-        date=date,
-        status=status,
-        search=search,
-    )
+    if current_user.role in [UserRole.ADMIN, UserRole.STAFF]:
+        events = await get_all_calendar_events(
+            db, month=month, date=date, status=status, search=search
+        )
+    else:
+        events = await get_user_calendar_events(
+            db,
+            user_id=current_user.id,
+            month=month,
+            date=date,
+            status=status,
+            search=search,
+        )
     return [CalendarEventResponse.from_orm_custom(e) for e in events]
 
 
@@ -80,7 +98,9 @@ async def get_single_calendar_event(
     """
     Get full details of a specific customs calendar event.
     """
-    event = await get_calendar_event_by_id(db, event_id=event_id, user_id=current_user.id)
+    is_admin = current_user.role in [UserRole.ADMIN, UserRole.STAFF]
+    user_id_filter = None if is_admin else current_user.id
+    event = await get_calendar_event_by_id(db, event_id=event_id, user_id=user_id_filter)
     if not event:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -94,6 +114,11 @@ async def get_single_calendar_event(
     response_model=CalendarEventResponse,
     summary="Update or reschedule a customs calendar event"
 )
+@router.put(
+    "/events/{event_id}",
+    response_model=CalendarEventResponse,
+    summary="Put calendar event update"
+)
 async def update_existing_calendar_event(
     event_id: int,
     event_in: CalendarEventUpdate,
@@ -103,8 +128,10 @@ async def update_existing_calendar_event(
     """
     Update details, reschedule date/time, or mark event completed.
     """
+    is_admin = current_user.role in [UserRole.ADMIN, UserRole.STAFF]
+    user_id_filter = None if is_admin else current_user.id
     updated = await update_calendar_event(
-        db, event_id=event_id, event_in=event_in, user_id=current_user.id
+        db, event_id=event_id, event_in=event_in, user_id=user_id_filter
     )
     if not updated:
         raise HTTPException(
@@ -124,9 +151,11 @@ async def delete_existing_calendar_event(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Cancel or delete an scheduled customs calendar event.
+    Cancel or delete a scheduled customs calendar event.
     """
-    success = await delete_calendar_event(db, event_id=event_id, user_id=current_user.id)
+    is_admin = current_user.role in [UserRole.ADMIN, UserRole.STAFF]
+    user_id_filter = None if is_admin else current_user.id
+    success = await delete_calendar_event(db, event_id=event_id, user_id=user_id_filter)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

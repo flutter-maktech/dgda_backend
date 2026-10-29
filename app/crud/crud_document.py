@@ -2,6 +2,7 @@ from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.customs_document import CustomsDocument
+from app.schemas.customs_document import CustomsDocumentCreate, CustomsDocumentUpdate
 
 
 INITIAL_DOCUMENTS = [
@@ -116,3 +117,35 @@ async def get_documents(
 async def get_document_by_id(db: AsyncSession, document_id: int) -> Optional[CustomsDocument]:
     result = await db.execute(select(CustomsDocument).where(CustomsDocument.id == document_id))
     return result.scalar_one_or_none()
+
+
+async def create_document(db: AsyncSession, doc_in: CustomsDocumentCreate) -> CustomsDocument:
+    db_obj = CustomsDocument(**doc_in.model_dump())
+    db.add(db_obj)
+    await db.commit()
+    await db.refresh(db_obj)
+    return db_obj
+
+
+async def update_document(
+    db: AsyncSession, document_id: int, doc_in: CustomsDocumentUpdate
+) -> Optional[CustomsDocument]:
+    db_obj = await get_document_by_id(db, document_id=document_id)
+    if not db_obj:
+        return None
+    update_data = doc_in.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(db_obj, field, value)
+    db.add(db_obj)
+    await db.commit()
+    await db.refresh(db_obj)
+    return db_obj
+
+
+async def delete_document(db: AsyncSession, document_id: int) -> bool:
+    db_obj = await get_document_by_id(db, document_id=document_id)
+    if not db_obj:
+        return False
+    await db.delete(db_obj)
+    await db.commit()
+    return True

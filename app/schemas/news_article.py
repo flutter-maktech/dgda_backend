@@ -14,6 +14,16 @@ class NewsArticleBase(BaseModel):
 class NewsArticleCreate(NewsArticleBase):
     pass
 
+class NewsArticleUpdate(BaseModel):
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+    content: Optional[str] = None
+    date: Optional[str] = None
+    category: Optional[str] = None
+    image_url: Optional[str] = None
+    pdf_url: Optional[str] = None
+    is_featured: Optional[bool] = None
+
 class NewsArticleResponse(NewsArticleBase):
     id: str
     is_favorite: Optional[bool] = False

@@ -1,7 +1,9 @@
 from typing import List, Optional
+import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.news_article import NewsArticle
+from app.schemas.news_article import NewsArticleCreate, NewsArticleUpdate
 
 INITIAL_NEWS = [
     {
@@ -124,5 +126,34 @@ class CRUDNews:
         stmt = select(NewsArticle).where(NewsArticle.id == id)
         result = await db.execute(stmt)
         return result.scalars().first()
+
+    async def create(self, db: AsyncSession, obj_in: NewsArticleCreate) -> NewsArticle:
+        item_data = obj_in.model_dump()
+        if "id" not in item_data or not item_data["id"]:
+            item_data["id"] = str(uuid.uuid4())
+        db_obj = NewsArticle(**item_data)
+        db.add(db_obj)
+        await db.commit()
+        await db.refresh(db_obj)
+        return db_obj
+
+    async def update(
+        self, db: AsyncSession, db_obj: NewsArticle, obj_in: NewsArticleUpdate
+    ) -> NewsArticle:
+        update_data = obj_in.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(db_obj, field, value)
+        db.add(db_obj)
+        await db.commit()
+        await db.refresh(db_obj)
+        return db_obj
+
+    async def delete(self, db: AsyncSession, id: str) -> bool:
+        db_obj = await self.get(db, id=id)
+        if not db_obj:
+            return False
+        await db.delete(db_obj)
+        await db.commit()
+        return True
 
 crud_news = CRUDNews()

@@ -1,12 +1,12 @@
 from datetime import timedelta
 import random
-from typing import Optional, Union
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from typing import List, Optional, Union
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Query
 from fastapi.security import HTTPAuthorizationCredentials
-from sqlalchemy import update
+from sqlalchemy import update, select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db, security_bearer
+from app.api.deps import get_current_user, get_db, security_bearer, get_current_active_staff
 from app.core.config import settings
 from app.core.limiter import limiter
 from app.core.security import (
@@ -565,5 +565,79 @@ async def reset_password(
     await db.commit()
 
     return {"message": "Votre mot de passe a été réinitialisé avec succès."}
+
+
+# =========================================================================
+# Administrative User & NIF Management Endpoints
+# =========================================================================
+
+@router.get(
+    "/users",
+    response_model=List[UserResponse],
+    summary="List all registered platform users (Admin only)"
+)
+async def list_users(
+    status_filter: Optional[str] = Query(None, alias="status", description="Filter by status (VERIFIED, PENDING, ALL)"),
+    search: Optional[str] = Query(None, description="Search by name, email, company, or NIF"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=500),
+    db: AsyncSession = Depends(get_db),
+    admin=Depends(get_current_active_staff),
+):
+    query = select(User)
+    if status_filter and status_filter.upper() != "ALL":
+        if status_filter.upper() == "VERIFIED":
+            query = query.where(User.is_verified.is_(True))
+        elif status_filter.upper() == "PENDING":
+            query = query.where(User.is_verified.is_(False))
+            
+    if search and search.strip():
+        term = f"%{search.strip()}%"
+        query = query.where(
+            or_(
+                User.full_name.ilike(term),
+                User.email.ilike(term),
+                User.company_name.ilike(term),
+                User.company_nif.ilike(term),
+                User.phone_number.ilike(term),
+            )
+        )
+    query = query.order_by(User.id.desc()).offset(skip).limit(limit)
+    res = await db.execute(query)
+    users = list(res.scalars().all())
+    return [UserResponse.model_validate(u) for u in users]
+
+
+@router.patch(
+    "/users/{user_id}/status",
+    response_model=UserResponse,
+    summary="Update user verification and active status (Admin only)"
+)
+async def update_user_status(
+    user_id: int,
+    payload: dict,
+    db: AsyncSession = Depends(get_db),
+    admin=Depends(get_current_active_staff),
+):
+    user = await get_user_by_id(db, user_id=user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Utilisateur non trouvé"
+        )
+    if "is_verified" in payload:
+        user.is_verified = bool(payload["is_verified"])
+    if "is_active" in payload:
+        user.is_active = bool(payload["is_active"])
+    if "company_nif" in payload:
+        user.company_nif = payload["company_nif"]
+    if "company_name" in payload:
+        user.company_name = payload["company_name"]
+
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return UserResponse.model_validate(user)
+
 
 

@@ -8,9 +8,10 @@ from app.crud.crud_declaration import (
     delete_declaration,
     get_declaration_by_id,
     get_user_declarations,
+    get_all_declarations,
     update_declaration,
 )
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.schemas.declaration import (
     DeclarationCreate,
     DeclarationResponse,
@@ -23,7 +24,7 @@ router = APIRouter()
 @router.get(
     "",
     response_model=List[DeclarationResponse],
-    summary="List all customs declarations for the current user"
+    summary="List all customs declarations"
 )
 async def list_declarations(
     status: Optional[str] = Query(None, description="Filter by status: all, pending, inProgress, validated, rejected"),
@@ -32,11 +33,16 @@ async def list_declarations(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Retrieve declarations list belonging to the authenticated user.
+    Retrieve declarations list:
+    - Administrators & Staff: Retrieve all global declarations across the system.
+    - Regular Users: Retrieve user-specific declarations.
     """
-    declarations = await get_user_declarations(
-        db, user_id=current_user.id, status=status, search=search
-    )
+    if current_user.role in [UserRole.ADMIN, UserRole.STAFF]:
+        declarations = await get_all_declarations(db, status=status, search=search)
+    else:
+        declarations = await get_user_declarations(
+            db, user_id=current_user.id, status=status, search=search
+        )
     return [DeclarationResponse.from_orm_custom(d) for d in declarations]
 
 
@@ -52,7 +58,7 @@ async def create_new_declaration(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Create a new customs declaration submitted by the authenticated user.
+    Create a new customs declaration.
     """
     created = await create_declaration(
         db, declaration_in=declaration_in, user_id=current_user.id
@@ -73,7 +79,9 @@ async def get_declaration(
     """
     Fetch full details and fiscal estimates for a single declaration.
     """
-    decl = await get_declaration_by_id(db, declaration_id=declaration_id, user_id=current_user.id)
+    is_admin = current_user.role in [UserRole.ADMIN, UserRole.STAFF]
+    user_id_filter = None if is_admin else current_user.id
+    decl = await get_declaration_by_id(db, declaration_id=declaration_id, user_id=user_id_filter)
     if not decl:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -87,6 +95,11 @@ async def get_declaration(
     response_model=DeclarationResponse,
     summary="Update declaration information or status"
 )
+@router.put(
+    "/{declaration_id}",
+    response_model=DeclarationResponse,
+    summary="Put declaration update"
+)
 async def update_existing_declaration(
     declaration_id: int,
     declaration_in: DeclarationUpdate,
@@ -94,9 +107,11 @@ async def update_existing_declaration(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Update declaration details or progression status.
+    Update declaration details, inspector assessment, or verification status.
     """
-    decl = await get_declaration_by_id(db, declaration_id=declaration_id, user_id=current_user.id)
+    is_admin = current_user.role in [UserRole.ADMIN, UserRole.STAFF]
+    user_id_filter = None if is_admin else current_user.id
+    decl = await get_declaration_by_id(db, declaration_id=declaration_id, user_id=user_id_filter)
     if not decl:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -117,9 +132,11 @@ async def remove_declaration(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Delete a declaration submitted by the user.
+    Delete a declaration.
     """
-    decl = await get_declaration_by_id(db, declaration_id=declaration_id, user_id=current_user.id)
+    is_admin = current_user.role in [UserRole.ADMIN, UserRole.STAFF]
+    user_id_filter = None if is_admin else current_user.id
+    decl = await get_declaration_by_id(db, declaration_id=declaration_id, user_id=user_id_filter)
     if not decl:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

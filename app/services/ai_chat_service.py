@@ -1,4 +1,5 @@
 import re
+import datetime
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 import httpx
@@ -28,102 +29,178 @@ Règles et directives :
 """
 
 # Rich DGDA domain knowledge base for Congolese Customs
-DGDA_KNOWLEDGE_ENTRIES = [
+DGDA_KNOWLEDGE_ENTRIES: List[Dict[str, Any]] = [
     {
-        "keywords": ["matadi", "document", "dossier", "requis", "obligatoire", "commercial", "conteneur", "container", "importer"],
+        "id": "qa-1",
+        "question": "What mandatory documents are required for clearing commercial goods at Matadi port?",
+        "keywords": ["matadi", "document", "dossier", "requis", "obligatoire", "commercial", "conteneur", "container", "importer", "invoice", "bill of lading", "clearance"],
         "category": "Customs Clearance",
         "legal_reference": "Code des Douanes RDC Art. 84 & Réglementation SEGUCE",
-        "answer": (
-            "Pour le dédouanement de marchandises commerciales au port de Matadi (ou tout port d'entrée en RDC), "
-            "les documents obligatoires à soumettre via le Guichet Unique (SEGUCE) et SydoniaWorld sont :\n\n"
-            "1. La Facture Commerciale originale définitive (avec ventilation FOB, Fret et Assurance)\n"
-            "2. Le Connaissement maritime original (Bill of Lading - B/L)\n"
-            "3. Le Certificat F.E.R.I. (Fiche Électronique de Renseignement à l'Importation) délivré par l'OGEFREM\n"
-            "4. La Déclaration Préalable d'Importation (DPI) validée auprès d'une banque commerciale\n"
-            "5. Le Certificat d'Inspection avant embarquement (BIVAC / Bureau Veritas) si requis\n"
-            "6. La Liste de colisage (Packing List)\n"
-            "7. Le Numéro d'Identification Fiscale (NIF) et le Registre de Commerce (RCCM) de l'importateur.\n\n"
-            "La déclaration en détail (IM4) doit être introduite par un Commissionnaire en Douane Agréé (CDA)."
-        ),
+        "official_answer": "Under Article 84 of the Congo Customs Code, commercial clearance requires the Commercial Invoice, Bill of Lading (B/L), FERI Certificate, and Tax ID.",
+        "confidence": 98,
+        "status": "active",
+        "updated_at": "2024-09-08",
     },
     {
-        "keywords": ["véhicule", "vehicule", "voiture", "auto", "car", "10 ans", "occasion", "immatriculation", "moteur"],
-        "category": "Vehicle Import",
-        "legal_reference": "Décret Primature N° 12/041 du 02 octobre 2012",
-        "answer": (
-            "Conformément au Décret N° 12/041, l'importation de véhicules d'occasion en République Démocratique du Congo "
-            "est strictement encadrée :\n\n"
-            "• Âge limite : Les véhicules de tourisme et utilitaires légers ne doivent pas dépasser 10 ans d'âge à compter de leur première mise en circulation.\n"
-            "• Véhicules de transport en commun (minibus, bus) : Limite fixée à 7 ans.\n"
-            "• Poids lourds et engins de travaux : Limite fixée à 20 ans.\n\n"
-            "Documents nécessaires : Carte grise originale ou certificat de radiation, facture d'achat authentifiée, contrôle technique du pays d'origine et B/L.\n"
-            "Toute dérogation spéciale pour véhicule d'utilité publique nécessite l'autorisation expresse conjointe du Ministère des Finances et du Directeur Général de la DGDA."
-        ),
-    },
-    {
-        "keywords": ["sadc", "comesa", "zlecaf", "préférentiel", "preferentiel", "origine", "tarif", "accord"],
+        "id": "qa-2",
+        "question": "How does an enterprise apply for preferential customs tariff under SADC agreement?",
+        "keywords": ["sadc", "comesa", "zlecaf", "préférentiel", "preferentiel", "origine", "tarif", "accord", "preferential", "tariff", "agreement"],
         "category": "Tariff & Classification",
         "legal_reference": "Protocole Commercial SADC Art. 12 & ZLECAf",
-        "answer": (
-            "Pour bénéficier du tarif douanier préférentiel (abattement ou exonération partielle des droits de douane) "
-            "dans le cadre des accords sous-régionaux (SADC / COMESA / ZLECAf) :\n\n"
-            "1. Certificat d'Origine : Vous devez obligatoirement produire le Certificat d'Origine SADC ou COMESA dûment visé par l'administration des douanes du pays exportateur membre.\n"
-            "2. Règle d'Origine : Les marchandises doivent satisfaire au critère de transformation substantielle ou être entièrement obtenues dans la région.\n"
-            "3. Transport direct : Les marchandises doivent transiter directement du pays membre vers la RDC sans rupture de charge injustifiée.\n"
-            "La valeur en douane taxable reste basée sur la valeur CIF (Coût, Assurance, Fret)."
-        ),
+        "official_answer": "Customs duties in the DRC are assessed based on CIF value. SADC preferential rates require EUR.1 or SADC Certificate of Origin validated by DGDA.",
+        "confidence": 96,
+        "status": "active",
+        "updated_at": "2024-09-07",
     },
     {
-        "keywords": ["exonération", "exoneration", "anapi", "investissement", "franchise", "minier", "code"],
+        "id": "qa-3",
+        "question": "What is the procedure for importing vehicles older than 10 years into DRC?",
+        "keywords": ["véhicule", "vehicule", "voiture", "auto", "car", "10 ans", "10 years", "occasion", "immatriculation", "moteur", "vehicle", "importing"],
+        "category": "Vehicle Import",
+        "legal_reference": "Décret Primature N° 12/041 du 02 octobre 2012",
+        "official_answer": "Vehicles must satisfy the maximum age limit of 10 years (Decree 12/041). Special exemption requires Ministry of Finance & DGDA authorization.",
+        "confidence": 95,
+        "status": "active",
+        "updated_at": "2024-09-06",
+    },
+    {
+        "id": "qa-4",
+        "question": "How does an enterprise apply for duty exemption under the Investment Code?",
+        "keywords": ["exonération", "exoneration", "anapi", "investissement", "franchise", "minier", "code", "exemption", "investment", "duty"],
         "category": "Exemptions",
         "legal_reference": "Loi N° 004/2002 Portant Code des Investissements & Code Minier",
-        "answer": (
-            "Les exonérations et régimes fiscaux privilégiés sont accordés selon la législation en vigueur :\n\n"
-            "• Code des Investissements (ANAPI) : Les entreprises agréées bénéficient de l'exonération des droits et taxes à l'importation sur les biens d'équipement, outillages neufs et pièces de rechange (taux réduit à 5% de redevance administrative DGDA).\n"
-            "• Procédure : Déposer l'arrêté interministériel d'agrément et le visa préalable de l'ANAPI lors de la soumission de la déclaration Sydonia (Code régime 4000/Exo).\n"
-            "• Entreprises minières : Application des taux préférentiels selon le Code Minier révisé (Loi n° 18/001)."
-        ),
+        "official_answer": "Enterprises approved by the National Investment Promotion Agency (ANAPI) submit Article 77 exemption certificate alongside the Sydonia declaration.",
+        "confidence": 92,
+        "status": "active",
+        "updated_at": "2024-09-05",
     },
     {
-        "keywords": ["transit", "t1", "caution", "acquit", "kasumbalesa", "goma", "corridor"],
+        "id": "qa-5",
+        "question": "What is the transit clearance regime (T1) and required customs collateral?",
+        "keywords": ["transit", "t1", "caution", "acquit", "kasumbalesa", "goma", "corridor", "bond", "collateral", "clearance"],
         "category": "Transit Permits",
         "legal_reference": "Instruction Administrative DGDA/DG/019 & Art. 132 Code des Douanes",
-        "answer": (
-            "Le régime de Transit Douanier National et International (Déclaration T1 / Acquit-à-caution) "
-            "permet l'acheminement de marchandises sous douane d'un bureau frontière (ex: Kasumbalesa, Matadi) vers un bureau de destination intérieure sans paiement préalable des droits :\n\n"
-            "• Cautionnement obligatoire : Souscription d'une garantie bancaire ou caution globale agréée couvrant 100% des droits et taxes exigibles.\n"
-            "• Scellement électronique : Les camions doivent être munis de balises GPS/scellés électroniques DGDA pour le suivi du corridor routier.\n"
-            "• Délais de route stricts : Entre 3 et 7 jours selon l'itinéraire agréé.\n"
-            "L'apurement de l'acquit s'effectue après vérification physique et déchargement au bureau de dédouanement final."
-        ),
+        "official_answer": "Transit under bond (Déclaration T1) mandates bank guarantee or authorized transit bond securing 100% of applicable duties and taxes.",
+        "confidence": 97,
+        "status": "active",
+        "updated_at": "2024-09-04",
     },
     {
-        "keywords": ["payer", "paiement", "banque", "rawbank", "droits", "taxes", "bcdc", "tmb", "calculer", "taux", "frais"],
+        "id": "qa-6",
+        "question": "What are the approved bank payment channels for DGDA liquidation notes?",
+        "keywords": ["payer", "paiement", "banque", "rawbank", "droits", "taxes", "bcdc", "tmb", "calculer", "taux", "frais", "payment", "bank", "liquidation"],
         "category": "Valuation & Duties",
         "legal_reference": "Loi de Finances RDC & Décret SEGUCE",
-        "answer": (
-            "Le paiement des droits et taxes de douane en RDC est totalement dématérialisé :\n\n"
-            "1. Liquidation : Le déclarant reçoit le Bulletin de Liquidation émis par SydoniaWorld.\n"
-            "2. Note de Perception SEGUCE : Un avis unique de versement reprenant les droits DGDA, redevances OGEFREM, OCC, et DGRAD est généré.\n"
-            "3. Règlement bancaire : Le paiement s'effectue exclusivement au guichet ou en ligne auprès des banques partenaires agréées (Rawbank, Equity BCDC, TMB, Sofibanque).\n"
-            "4. Quittance et Bon à Enlever (BAE) : Dès confirmation électronique du paiement par la banque, la quittance douanière est validée et le Bon à Enlever (BAE) est délivré."
-        ),
+        "official_answer": "Customs payment is fully digitized via approved partner banks (Rawbank, Equity BCDC, TMB, Sofibanque) upon SEGUCE liquidation notice issuance.",
+        "confidence": 99,
+        "status": "active",
+        "updated_at": "2024-09-03",
     },
     {
-        "keywords": ["suivi", "track", "statut", "status", "déclaration", "declaration", "numero", "référence"],
+        "id": "qa-7",
+        "question": "How do declarants track SydoniaWorld declaration clearance circuits in real-time?",
+        "keywords": ["suivi", "track", "statut", "status", "déclaration", "declaration", "numero", "référence", "sydonia", "sydoniaworld", "circuit"],
         "category": "Tracking & Declarations",
         "legal_reference": "Plateforme SydoniaWorld DGDA",
-        "answer": (
-            "Pour suivre l'état d'avancement de votre déclaration douanière en temps réel :\n\n"
-            "• Vous pouvez consulter l'onglet 'Déclarations' de cette application mobile pour voir le statut en direct (En attente, En cours, Validé, Rejeté).\n"
-            "• Munissez-vous de votre numéro de déclaration (ex: DEC-2024-XXXXX ou numéro L/Q Sydonia) ou de votre numéro de connaissement (B/L) / manifeste.\n"
-            "• Les différents circuits de contrôle sont : Vert (Enlèvement immédiat), Bleu (Contrôle différé), Jaune (Contrôle documentaire), Rouge (Inspection physique des marchandises)."
-        ),
+        "official_answer": "Declarants can track status via the DGDA App or portal using their declaration number. Inspection channels include Green, Blue, Yellow, and Red.",
+        "confidence": 94,
+        "status": "active",
+        "updated_at": "2024-09-02",
     },
 ]
 
 
 class AIChatService:
+    @staticmethod
+    def _format_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
+        """Ensures entry has both snake_case and camelCase keys for compatibility."""
+        return {
+            "id": entry.get("id", f"qa-{int(datetime.datetime.now().timestamp())}"),
+            "question": entry.get("question", ""),
+            "category": entry.get("category", "Customs Clearance"),
+            "legal_reference": entry.get("legal_reference", entry.get("legalReference", "Code des Douanes RDC")),
+            "legalReference": entry.get("legalReference", entry.get("legal_reference", "Code des Douanes RDC")),
+            "official_answer": entry.get("official_answer", entry.get("officialAnswer", entry.get("answer", ""))),
+            "officialAnswer": entry.get("officialAnswer", entry.get("official_answer", entry.get("answer", ""))),
+            "keywords": entry.get("keywords", []),
+            "confidence": int(entry.get("confidence", 95)),
+            "status": entry.get("status", "active"),
+            "updated_at": entry.get("updated_at", entry.get("updatedAt", datetime.date.today().isoformat())),
+            "updatedAt": entry.get("updatedAt", entry.get("updated_at", datetime.date.today().isoformat())),
+        }
+
+    @staticmethod
+    def get_all_knowledge_entries() -> List[Dict[str, Any]]:
+        return [AIChatService._format_entry(e) for e in DGDA_KNOWLEDGE_ENTRIES]
+
+    @staticmethod
+    def get_knowledge_entry(entry_id: str) -> Optional[Dict[str, Any]]:
+        for entry in DGDA_KNOWLEDGE_ENTRIES:
+            if entry.get("id") == entry_id:
+                return AIChatService._format_entry(entry)
+        return None
+
+    @staticmethod
+    def add_knowledge_entry(data: Dict[str, Any]) -> Dict[str, Any]:
+        new_id = data.get("id") or f"qa-{len(DGDA_KNOWLEDGE_ENTRIES) + 1}-{int(datetime.datetime.now().timestamp())}"
+        keywords = data.get("keywords") or [w.lower() for w in data.get("question", "").split() if len(w) > 3]
+        entry = {
+            "id": new_id,
+            "question": data.get("question", ""),
+            "category": data.get("category", "Customs Clearance"),
+            "legal_reference": data.get("legal_reference", data.get("legalReference", "Code des Douanes RDC")),
+            "official_answer": data.get("official_answer", data.get("officialAnswer", "")),
+            "keywords": keywords,
+            "confidence": int(data.get("confidence", 95)),
+            "status": data.get("status", "active"),
+            "updated_at": datetime.date.today().isoformat(),
+        }
+        DGDA_KNOWLEDGE_ENTRIES.insert(0, entry)
+        return AIChatService._format_entry(entry)
+
+    @staticmethod
+    def update_knowledge_entry(entry_id: str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        for idx, entry in enumerate(DGDA_KNOWLEDGE_ENTRIES):
+            if entry.get("id") == entry_id:
+                if "question" in data and data["question"] is not None:
+                    entry["question"] = data["question"]
+                if "category" in data and data["category"] is not None:
+                    entry["category"] = data["category"]
+                if "legal_reference" in data and data["legal_reference"] is not None:
+                    entry["legal_reference"] = data["legal_reference"]
+                elif "legalReference" in data and data["legalReference"] is not None:
+                    entry["legal_reference"] = data["legalReference"]
+                if "official_answer" in data and data["official_answer"] is not None:
+                    entry["official_answer"] = data["official_answer"]
+                elif "officialAnswer" in data and data["officialAnswer"] is not None:
+                    entry["official_answer"] = data["officialAnswer"]
+                if "keywords" in data and data["keywords"] is not None:
+                    entry["keywords"] = data["keywords"]
+                if "confidence" in data and data["confidence"] is not None:
+                    entry["confidence"] = int(data["confidence"])
+                if "status" in data and data["status"] is not None:
+                    entry["status"] = data["status"]
+                entry["updated_at"] = datetime.date.today().isoformat()
+                return AIChatService._format_entry(entry)
+        return None
+
+    @staticmethod
+    def delete_knowledge_entry(entry_id: str) -> bool:
+        for idx, entry in enumerate(DGDA_KNOWLEDGE_ENTRIES):
+            if entry.get("id") == entry_id:
+                DGDA_KNOWLEDGE_ENTRIES.pop(idx)
+                return True
+        return False
+
+    @staticmethod
+    def recalibrate_entry(entry_id: str) -> Optional[Dict[str, Any]]:
+        for entry in DGDA_KNOWLEDGE_ENTRIES:
+            if entry.get("id") == entry_id:
+                entry["confidence"] = min(99, int(entry.get("confidence", 90)) + 1)
+                entry["updated_at"] = datetime.date.today().isoformat()
+                return AIChatService._format_entry(entry)
+        return None
+
     @staticmethod
     async def generate_response(
         user_message: str,
@@ -165,7 +242,6 @@ class AIChatService:
         user_message: str,
         conversation_history: Optional[List[ChatMessage]] = None
     ) -> Optional[Dict[str, Any]]:
-        """Call Google Gemini 1.5 Flash API with conversation history context."""
         gemini_key = settings.GEMINI_API_KEY.strip()
         if not gemini_key:
             return None
@@ -201,28 +277,19 @@ class AIChatService:
             resp = await client.post(url, json=payload)
             if resp.status_code == 200:
                 data = resp.json()
-                try:
-                    candidates = data.get("candidates", [])
-                    if not candidates:
-                        return None
-                    content = candidates[0]["content"]["parts"][0]["text"].strip()
+                content = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                legal_ref = None
+                ref_match = re.search(r"\[Réf:?\s*([^\]]+)\]", content, re.IGNORECASE)
+                if ref_match:
+                    legal_ref = ref_match.group(1).strip()
+                else:
+                    legal_ref = "Code des Douanes RDC (Loi n° 10/002)"
 
-                    # Extract legal reference if present
-                    legal_ref = None
-                    ref_match = re.search(r"\[Réf:?\s*([^\]]+)\]", content, re.IGNORECASE)
-                    if ref_match:
-                        legal_ref = ref_match.group(1).strip()
-                    else:
-                        legal_ref = "Code des Douanes RDC (Loi n° 10/002)"
-
-                    return {
-                        "reply": content,
-                        "legal_reference": legal_ref,
-                        "category": AIChatService._infer_category(user_message),
-                    }
-                except (KeyError, IndexError) as err:
-                    logger.warning(f"Failed to parse Gemini response: {err}")
-                    return None
+                return {
+                    "reply": content,
+                    "legal_reference": legal_ref,
+                    "category": AIChatService._infer_category(user_message),
+                }
             else:
                 logger.warning(f"Gemini API returned status {resp.status_code}: {resp.text}")
                 return None
@@ -232,12 +299,7 @@ class AIChatService:
         user_message: str,
         conversation_history: Optional[List[ChatMessage]] = None
     ) -> Optional[Dict[str, Any]]:
-        """Call OpenAI chat completions API with conversation history context."""
-        messages: List[Dict[str, str]] = [
-            {"role": "system", "content": DGDA_SYSTEM_PROMPT}
-        ]
-
-        # Add recent conversation turns for context memory (up to last 6 messages)
+        messages = [{"role": "system", "content": DGDA_SYSTEM_PROMPT}]
         if conversation_history:
             for msg in conversation_history[-6:]:
                 role = "assistant" if msg.role == "assistant" else "user"
@@ -267,8 +329,6 @@ class AIChatService:
             if resp.status_code == 200:
                 data = resp.json()
                 content = data["choices"][0]["message"]["content"].strip()
-
-                # Extract legal reference if present in [Réf: ...] format
                 legal_ref = None
                 ref_match = re.search(r"\[Réf:?\s*([^\]]+)\]", content, re.IGNORECASE)
                 if ref_match:
@@ -292,51 +352,57 @@ class AIChatService:
         """Domain-trained customs intelligence engine with full Congolese customs knowledge."""
         lower = user_message.lower()
 
-        # Score matching entries
         best_entry = None
         best_score = 0
 
         for entry in DGDA_KNOWLEDGE_ENTRIES:
-            score = sum(1 for kw in entry["keywords"] if kw in lower)
+            keywords = entry.get("keywords", [])
+            score = sum(1 for kw in keywords if kw in lower)
+            q_words = [w.lower() for w in entry.get("question", "").split() if len(w) > 3]
+            score += sum(1 for qw in q_words if qw in lower)
+
             if score > best_score:
                 best_score = score
                 best_entry = entry
 
         if best_entry and best_score >= 1:
+            ans = best_entry.get("official_answer") or best_entry.get("answer", "")
             return {
-                "reply": best_entry["answer"],
-                "legal_reference": best_entry["legal_reference"],
-                "category": best_entry["category"],
+                "reply": ans,
+                "legal_reference": best_entry.get("legal_reference", "Code des Douanes RDC"),
+                "category": best_entry.get("category", "Customs Clearance"),
+                "confidence": best_entry.get("confidence", 95),
+                "matched_id": best_entry.get("id"),
             }
 
-        # Polite, helpful generalized Congolese Customs response
         category = AIChatService._infer_category(user_message)
         reply = (
-            f"Merci pour votre demande relative à votre opération douanière.\n\n"
-            f"Pour traiter efficacement votre requête concernant « {user_message} », les services de la DGDA "
-            f"vous recommandent d'introduire votre dossier dans le système SydoniaWorld ou de vous rapprocher "
-            f"d'un Commissionnaire en Douane Agréé (CDA).\n\n"
-            f"• Consultez également la section 'Déclarations' ou 'Documents Officiels' de l'application pour les guides détaillés.\n"
-            f"• Pour toute vérification tarifaire spécifique, le Tarif des Douanes à l'Importation et à l'Exportation (Nomenclature SH 2024) fait foi."
+            f"Under the Democratic Republic of Congo Customs regulations (DGDA) and SydoniaWorld procedures:\n\n"
+            f"Regarding your query on \"{user_message}\", all declarants and authorized customs brokers (CDA) "
+            f"are advised to submit documentation through the Single Window (SEGUCE) and comply with statutory inspection channels.\n\n"
+            f"• Please consult the 'Customs Declarations' or 'Official Regulatory Documents' directory in the portal for complete legal guidance.\n"
+            f"• For specialized tariff inquiries, the official HS Code Tariff Nomenclature 2026 governs valuation."
         )
 
         return {
             "reply": reply,
             "legal_reference": "Code des Douanes RDC (Loi n° 10/002 du 20 août 2010)",
             "category": category,
+            "confidence": 88,
+            "matched_id": None,
         }
 
     @staticmethod
     def _infer_category(query: str) -> str:
         q = query.lower()
-        if any(w in q for w in ["sadc", "comesa", "zlecaf", "sh", "tarif", "classification", "code"]):
+        if any(w in q for w in ["sadc", "comesa", "zlecaf", "sh", "tarif", "tariff", "classification", "code"]):
             return "Tariff & Classification"
-        if any(w in q for w in ["véhicule", "vehicule", "voiture", "auto", "camion"]):
+        if any(w in q for w in ["véhicule", "vehicule", "voiture", "auto", "camion", "vehicle", "car"]):
             return "Vehicle Import"
-        if any(w in q for w in ["exonération", "exoneration", "anapi", "franchise"]):
+        if any(w in q for w in ["exonération", "exoneration", "anapi", "franchise", "exemption"]):
             return "Exemptions"
-        if any(w in q for w in ["transit", "t1", "acquit", "caution"]):
+        if any(w in q for w in ["transit", "t1", "acquit", "caution", "bond"]):
             return "Transit Permits"
-        if any(w in q for w in ["payer", "paiement", "banque", "rawbank", "taxe", "bcdc", "tmb", "frais"]):
+        if any(w in q for w in ["payer", "paiement", "banque", "rawbank", "taxe", "bcdc", "tmb", "frais", "pay", "fee"]):
             return "Valuation & Duties"
         return "Customs Clearance"
