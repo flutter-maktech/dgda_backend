@@ -18,14 +18,14 @@ from app.models.calendar_event import CalendarEvent
 
 
 async def seed_initial_admin() -> None:
-    """Seed default administrator account if the database has no admin."""
+    """Seed default administrator account if the database has no admin, and ensure it is active."""
     async with AsyncSessionLocal() as session:
         try:
             result = await session.execute(
-                select(User).where(User.role == UserRole.ADMIN)
+                select(User).where(User.email == "admin@dgda.gouv.cd")
             )
-            existing_admin = result.scalars().first()
-            if not existing_admin:
+            admin_user = result.scalars().first()
+            if not admin_user:
                 default_admin = User(
                     email="admin@dgda.gouv.cd",
                     username="admin_dgda",
@@ -39,6 +39,14 @@ async def seed_initial_admin() -> None:
                 session.add(default_admin)
                 await session.commit()
                 print("Default administrator seeded: admin@dgda.gouv.cd / Admin@DGDA2026!")
+            else:
+                # Ensure the main admin account is always active and verified
+                if not admin_user.is_active or not admin_user.is_verified or admin_user.role != UserRole.ADMIN:
+                    admin_user.is_active = True
+                    admin_user.is_verified = True
+                    admin_user.role = UserRole.ADMIN
+                    await session.commit()
+                    print("Reactivated default administrator: admin@dgda.gouv.cd")
         except Exception as e:
             await session.rollback()
             print(f"Error seeding initial admin: {e}")
