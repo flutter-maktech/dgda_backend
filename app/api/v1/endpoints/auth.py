@@ -625,6 +625,12 @@ async def update_user_status(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Utilisateur non trouvé"
         )
+    # Prevent deactivating main admin account
+    if user.email == "admin@dgda.gouv.cd" and not bool(payload.get("is_active", True)):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot deactivate the main administrator account."
+        )
     if "is_verified" in payload:
         user.is_verified = bool(payload["is_verified"])
     if "is_active" in payload:
@@ -638,6 +644,23 @@ async def update_user_status(
     await db.commit()
     await db.refresh(user)
     return UserResponse.model_validate(user)
+
+
+@router.post(
+    "/reactivate-admin",
+    summary="Emergency reactivation of default administrator account"
+)
+async def reactivate_default_admin(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == "admin@dgda.gouv.cd"))
+    admin = result.scalars().first()
+    if admin:
+        admin.is_active = True
+        admin.is_verified = True
+        admin.role = UserRole.ADMIN
+        db.add(admin)
+        await db.commit()
+        return {"status": "success", "message": "Admin account reactivated successfully"}
+    return {"status": "error", "message": "Admin account not found"}
 
 
 
